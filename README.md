@@ -1,5 +1,5 @@
 <h1 align="center">Hi 👋, I'm Henri Touchard</h1>
-<h3 align="center">A french fullstack developer from France</h3>
+<h3 align="center">A french fullstack developer</h3>
 
 - 🔭 I’m currently working on [Lizee's reuse management system](lizee.co)
 
