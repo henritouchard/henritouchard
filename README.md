@@ -5,7 +5,7 @@
 
 - 📫 How to reach me **henritouchard@gmail.com**
 
-- ⚡ Fun fact **I would like to become priest before i became developer**
+- ⚡ Fun fact: **I would like to become priest before i became developer**
 
 <h3 align="left">Connect with me:</h3>
 <p align="left">
