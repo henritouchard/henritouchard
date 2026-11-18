@@ -1,0 +1,779 @@
+<!doctype html>
+<!--
+  PROTOTYPE JETABLE — ticket « Quels principes de mouvement sur le site ? » (#22), carte « Charte graphique Henri Touchard » (#19)
+  Base : page retenue dans « La palette et les typographies… » (#21) : variante E, encre nuit, dégradé léger.
+  Quatre partis pris de mouvement : ?variant=A|B|C|D · pages : ?page=accueil|recit · ?rm=1 simule prefers-reduced-motion · flèches ← →
+  Ouvrir : xdg-open prototypes/mouvement/index.html
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mouvement — prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img,svg{display:block}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.narrow{max-width:720px;margin:0 auto;padding:0 24px}
+button{font:inherit;cursor:pointer}
+.ph{color:var(--muted);font-style:italic}
+
+/* ---------- logo : tuile monogramme (piste 5), déclinée par variante ---------- */
+.tile{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;
+  background:var(--tile-bg);color:var(--tile-fg);font-family:var(--f-tile);font-weight:600;letter-spacing:-.04em;line-height:1}
+.tile i{position:absolute;background:var(--accent);border-radius:2px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand b{font-family:var(--f-display);font-weight:600;font-size:18px;letter-spacing:-.01em}
+
+/* ---------- barre de navigation fixe (commune, stylée par variante) ---------- */
+.nav{position:sticky;top:0;z-index:20;background:var(--nav-bg);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+.nav nav{display:flex;align-items:center;gap:26px}
+.nav nav a.l{text-decoration:none;font-size:15px;color:var(--ink-2)}
+.nav nav a.l[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:6px}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;text-decoration:none;font-weight:600;font-size:15px;border:0;
+  background:var(--cta-bg);color:var(--cta-fg);border-radius:var(--radius)}
+.cta.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-strong)}
+@media (max-width:760px){.nav nav a.l{display:none}.nav .cta{padding:0 14px;font-size:14px}}
+
+/* ---------- modale du brief (commune) ---------- */
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(10,12,16,.45);display:none;align-items:center;justify-content:center;padding:24px}
+.modal-bg.open{display:flex}
+.modal{width:100%;max-width:620px;background:var(--surface);color:var(--ink);border-radius:var(--radius-lg);padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:18px}
+.modal h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:28px;letter-spacing:-.01em}
+.steps{display:flex;gap:6px}.steps span{flex:1;height:4px;border-radius:2px;background:var(--line)}.steps span.on{background:var(--accent)}
+.modal label{font-size:14px;font-weight:600}
+.modal textarea{width:100%;min-height:160px;padding:14px;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);resize:vertical}
+.modal .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+.modal .note{font-size:13px;color:var(--muted);margin:0}
+@media (max-width:640px){.modal-bg{padding:0}.modal{max-width:none;height:100%;border-radius:0}}
+
+/* ---------- barre de bascule du prototype (hors design) ---------- */
+#proto{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:6px;padding:6px;
+  background:#111;color:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:500 13px/1 system-ui,sans-serif;white-space:nowrap}
+#proto button{background:#2a2a2a;color:#fff;border:0;border-radius:999px;height:34px;min-width:34px;padding:0 12px}
+#proto button[aria-pressed=true]{background:#fff;color:#111}
+#proto .lbl{padding:0 10px;min-width:210px;text-align:center}
+#proto .sep{width:1px;height:20px;background:#444;margin:0 4px}
+
+/* =====================================================================
+   VARIANTE C — « Schéma » : plan technique, mono, la friction devient flux
+   ===================================================================== */
+.vC{--bg:#FAFAF8;--surface:#fff;--ink:#101418;--ink-2:#3B424B;--muted:#5C6570;--line:#E1E3E6;--line-strong:#C3C8CE;
+  --accent:#C2410C;--accent-ink:#B23B0B;--cta-bg:#101418;--cta-fg:#fff;--nav-bg:rgba(250,250,248,.9);
+  --tile-bg:#101418;--tile-fg:#fff;--f-tile:'IBM Plex Mono',monospace;
+  --f-display:'IBM Plex Sans',system-ui,sans-serif;--f-body:'IBM Plex Sans',system-ui,sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:4px;--radius-lg:8px;font-size:17px;line-height:1.6}
+.vC main{background-image:radial-gradient(#D9DCE0 1px,transparent 1px);background-size:24px 24px}
+.vC .mono{font-family:var(--f-mono)}
+.vC .nav nav a.l{font-family:var(--f-mono);font-size:14px}
+.vC .brand b{font-family:var(--f-mono);font-weight:500;font-size:16px}
+.vC .cta{font-family:var(--f-mono);font-weight:500;font-size:14px}
+.vC .cta::after{content:"→"}
+.vC .hero{padding:80px 0 88px}
+.vC .hero-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:48px;align-items:center}
+@media (max-width:900px){.vC .hero-grid{grid-template-columns:1fr}}
+.vC .tag{display:inline-block;font-family:var(--f-mono);font-size:13px;color:var(--accent-ink);background:#FFF1EA;border:1px solid #F6CDB7;border-radius:4px;padding:5px 10px}
+.vC h1{margin:22px 0 0;font-weight:600;font-size:clamp(34px,4.8vw,58px);line-height:1.08;letter-spacing:-.025em}
+.vC .lede{margin:22px 0 0;font-size:19px;color:var(--ink-2);max-width:620px}
+.vC .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.vC .diagram{background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:20px}
+.vC .diagram .cap{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:8px}
+.vC .sec{padding:88px 0;border-top:1px solid var(--line)}
+.vC .sec-label{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC h2{margin:8px 0 36px;font-weight:600;font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em;line-height:1.12}
+.vC .spec{border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);overflow:hidden}
+.vC .spec div{display:grid;grid-template-columns:260px 1fr;border-top:1px solid var(--line)}
+.vC .spec div:first-child{border-top:0}
+.vC .spec dt{padding:18px 22px;font-family:var(--f-mono);font-size:14px;color:var(--accent-ink);border-right:1px solid var(--line);background:#FCFCFB}
+.vC .spec dd{margin:0;padding:18px 22px}
+.vC .spec dd b{display:block;font-weight:600}
+.vC .spec dd span{color:var(--ink-2);font-size:15px}
+@media (max-width:700px){.vC .spec div{grid-template-columns:1fr}.vC .spec dt{border-right:0;border-bottom:1px solid var(--line)}}
+.vC .tickets{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.vC .ticket{background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.vC .ticket header{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.vC .ticket header span:last-child{color:var(--accent-ink)}
+.vC .ticket p{margin:0;font-size:18px;font-weight:500;line-height:1.35}
+.vC .ticket a{margin-top:auto;font-family:var(--f-mono);font-size:13px;color:var(--ink);text-underline-offset:4px}
+.vC .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;position:relative}
+.vC .flow li{list-style:none;position:relative;padding:0 18px 0 0}
+.vC .flow .node{display:flex;align-items:center;gap:0;margin-bottom:18px}
+.vC .flow .dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;flex:none}
+.vC .flow li:last-child .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+.vC .flow .wire{flex:1;height:2px;background:var(--ink)}
+.vC .flow li:last-child .wire{background:repeating-linear-gradient(90deg,var(--accent) 0 6px,transparent 6px 12px)}
+.vC .flow h3{margin:0 0 6px;font-size:19px;font-weight:600}
+.vC .flow p{margin:0;font-size:15px;color:var(--ink-2)}
+.vC ol.flow{margin:0;padding:0}
+@media (max-width:860px){.vC .flow{grid-template-columns:1fr 1fr;row-gap:36px}}
+@media (max-width:520px){.vC .flow{grid-template-columns:1fr}}
+.vC .loop{margin-top:28px;font-family:var(--f-mono);font-size:13px;color:var(--accent-ink)}
+.vC .guar{margin-top:40px;display:flex;flex-wrap:wrap;gap:10px}
+.vC .guar span{font-family:var(--f-mono);font-size:13px;border:1px solid var(--line-strong);background:var(--surface);border-radius:4px;padding:8px 12px}
+.vC .guar span::before{content:"✓ ";color:var(--accent-ink)}
+.vC .final{padding:96px 0;border-top:1px solid var(--line)}
+.vC .final .box{background:var(--ink);color:#fff;border-radius:10px;padding:48px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center}
+.vC .final h2{color:#fff;margin:0 0 10px}
+.vC .final p{margin:0;color:#B7BEC7}
+.vC .final .cta{background:var(--accent);color:#fff}
+@media (max-width:760px){.vC .final .box{grid-template-columns:1fr;padding:32px}}
+.vC footer{padding:24px 0;font-family:var(--f-mono);font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.vC footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+/* récit C */
+.vC .r-grid{display:grid;grid-template-columns:220px minmax(0,760px);gap:56px;padding:56px 0 96px}
+@media (max-width:960px){.vC .r-grid{grid-template-columns:1fr}.vC .toc{display:none}}
+.vC .toc{position:sticky;top:96px;align-self:start;font-family:var(--f-mono);font-size:13px;display:flex;flex-direction:column;gap:10px}
+.vC .toc a{text-decoration:none;color:var(--muted)}.vC .toc a.on{color:var(--ink)}.vC .toc a.on::before{content:"▸ ";color:var(--accent)}
+.vC .crumb{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC .crumb a{color:var(--accent-ink);text-decoration:none}
+.vC .r-title{margin:16px 0 0;font-weight:600;font-size:clamp(32px,4vw,48px);line-height:1.1;letter-spacing:-.02em}
+.vC .r-chapo{margin:18px 0 0;font-size:20px;color:var(--ink-2)}
+.vC .r-sum{margin:36px 0 0;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:0}
+.vC .r-sum .b{background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:16px}
+.vC .r-sum .b:last-child{border-color:var(--accent)}
+.vC .r-sum .arr{display:flex;align-items:center;padding:0 8px;font-family:var(--f-mono);color:var(--muted)}
+.vC .r-sum h4{margin:0 0 6px;font-family:var(--f-mono);font-weight:500;font-size:12px;color:var(--accent-ink)}
+.vC .r-sum p{margin:0;font-size:15px;line-height:1.45}
+@media (max-width:760px){.vC .r-sum{grid-template-columns:1fr}.vC .r-sum .arr{justify-content:center;padding:6px 0;transform:rotate(90deg)}}
+.vC .fiche{margin:24px 0 0;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--f-mono);font-size:13px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.vC .fiche div{padding:12px 14px;border-right:1px solid var(--line)}
+.vC .fiche dt{color:var(--muted);font-size:11px}
+.vC .fiche dd{margin:4px 0 0}
+.vC .r-body{margin-top:48px;font-size:18px;line-height:1.75}
+.vC .r-body h2{font-size:26px;margin:52px 0 12px}
+.vC .r-body h2 span{font-family:var(--f-mono);font-weight:400;font-size:15px;color:var(--accent-ink);margin-right:10px}
+.vC .r-body p{margin:0 0 20px}
+.vC .fig{margin:32px 0;height:300px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC .r-end{margin-top:56px;background:var(--ink);color:#fff;border-radius:10px;padding:32px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px}
+.vC .r-end h3{margin:0;font-size:24px;font-weight:600}
+.vC .r-end .cta{background:var(--accent);color:#fff}
+.vC .r-next{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.vC .r-next a{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:18px}
+.vC .r-next small{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.vC .r-next b{display:block;margin-top:6px;font-weight:600;font-size:18px;line-height:1.3}
+
+/* =====================================================================
+   VARIANTE D — « B × C » : mise en page épurée de B, couleurs et composants de C
+   (body = .vC.vD : hérite de C, surcharge ici). E = D avec titres en Space Grotesk.
+   ===================================================================== */
+.vD{--f-tile:'IBM Plex Sans',sans-serif}
+.vE{--f-display:'Space Grotesk',sans-serif;--f-tile:'Space Grotesk',sans-serif}
+.vC.vD main{background-image:none}
+.vD h1,.vD h2,.vD h3,.vD .r-title,.vD .brand b{font-family:var(--f-display)}
+.vC.vD .brand b{font-weight:600;font-size:17px}
+.vD .surt{display:flex;align-items:center;gap:16px;margin:0;font-family:var(--f-mono);font-size:13px;color:var(--accent-ink)}
+.vD .surt::after{content:"";flex:1;height:1px;background:var(--line-strong)}
+.vD .surt.c::before{content:"";flex:1;height:1px;background:var(--line-strong)}
+.vC.vD .hero{padding:72px 0 88px;border-bottom:1px solid var(--line)}
+.vC.vD .hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:56px;align-items:end;margin-top:44px}
+.vC.vD h1{margin:0;font-size:clamp(40px,5.6vw,74px);line-height:1.04;letter-spacing:-.03em;font-weight:600}
+.vD h1 em{font-style:normal;color:var(--accent-ink)}
+.vD .hero aside{border-left:1px solid var(--line-strong);padding-left:28px}
+.vC.vD .lede{margin:0 0 28px;font-size:18px}
+.vC.vD .btns{flex-direction:column;align-items:flex-start;margin-top:0;gap:16px}
+.vD .more{font-family:var(--f-mono);font-size:14px;text-underline-offset:5px}
+@media (max-width:900px){.vC.vD .hero-grid{grid-template-columns:1fr}.vD .hero aside{border-left:0;padding-left:0}}
+.vC.vD .sec{padding:96px 0;border-top:0;border-bottom:1px solid var(--line)}
+.vC.vD h2{margin:10px 0 40px}
+.vD .sec-head{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:56px}
+.vD .sec-head h2{margin-bottom:0}
+@media (max-width:860px){.vD .sec-head{grid-template-columns:1fr;gap:24px}}
+.vD ol.toc{margin:0;padding:0;list-style:none}
+.vD ol.toc li{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:22px 0;border-top:1px solid var(--line)}
+.vD ol.toc li:last-child{border-bottom:1px solid var(--line)}
+.vD ol.toc .n{font-family:var(--f-mono);font-size:14px;color:var(--accent-ink);padding-top:3px}
+.vD ol.toc h3{margin:0 0 4px;font-size:20px;font-weight:600}
+.vD ol.toc p{margin:0;color:var(--ink-2);font-size:16px}
+.vD .promise{margin-top:56px;border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:28px 32px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.vD .promise ul{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.vD .promise li::before{content:"✓ ";color:var(--accent-ink);font-family:var(--f-mono)}
+.vD .promise p{margin:0;color:var(--ink-2)}
+@media (max-width:700px){.vD .promise{grid-template-columns:1fr}}
+.vC.vD .final{padding:112px 0;text-align:center;border-top:0}
+.vD .final h2{max-width:820px;margin:18px auto 18px}
+.vD .final p{margin:0 auto 32px;color:var(--ink-2);max-width:560px}
+.vD .r-head{padding:72px 0 44px;text-align:center}
+.vC.vD .r-title{margin:22px auto 0;max-width:900px;font-size:clamp(34px,4.6vw,58px);line-height:1.08}
+.vC.vD .r-chapo{margin:22px auto 0;max-width:640px}
+.vD .r-meta{margin-top:20px;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC.vD .r-grid{grid-template-columns:200px minmax(0,700px) 1fr;gap:48px;padding:0 0 96px}
+@media (max-width:980px){.vC.vD .r-grid{grid-template-columns:1fr}}
+.vD .margin{position:sticky;top:96px;align-self:start;margin:0;font-family:var(--f-mono);font-size:13px;display:flex;flex-direction:column;gap:14px;padding-top:6px}
+.vD .margin dt{font-size:11px;color:var(--muted)}
+.vD .margin dd{margin:2px 0 0}
+@media (max-width:980px){.vD .margin{position:static;flex-direction:row;flex-wrap:wrap;gap:12px 24px}}
+.vC.vD .r-sum{margin-top:0}
+.vD .chain{margin:56px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+.vD .chain li{display:flex;align-items:center;gap:12px;font-size:16px;color:var(--ink-2);position:relative;padding-right:24px}
+.vD .chain li:not(:last-child)::after{content:"";flex:1;min-width:24px;height:2px;background:var(--ink)}
+.vD .chain li span:nth-child(2){max-width:220px}
+.vD .chain b{color:var(--ink);font-weight:600}
+.vD .chain .dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;flex:none;background:var(--surface)}
+.vD .chain li:nth-child(2) .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (max-width:760px){.vD .chain{grid-template-columns:1fr;gap:14px}.vD .chain li::after{display:none}}
+
+/* =====================================================================
+   PALETTE ET LOGO 7b — surcharges communes aux quatre variantes
+   ===================================================================== */
+.vC{--accent:#F0503C;--accent-ink:#C7362A;--tint:#FEEEEB;--tint-line:#F8C9C1;--sec:#101418;
+  --filet:var(--ink);--filet-ac:var(--accent);
+  --tile-bg:#101418;--tile-fg:#fff;--tile-ac:#F0503C;
+  --cta2-bg:#C7362A;--cta2-fg:#fff}
+.vC .tag{background:var(--tint);border-color:var(--tint-line)}
+.vC .final .cta,.vC .r-end .cta{background:var(--cta2-bg);color:var(--cta2-fg)}
+.mark{display:block;flex:none}
+.brand{gap:12px}
+.lockup{display:flex;align-items:center}
+.lockup .t{display:flex;flex-direction:column}
+.lockup .t b{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-.02em;line-height:1;color:var(--ink)}
+.lockup .t span{font-family:'IBM Plex Sans',sans-serif;line-height:1;color:var(--muted)}
+
+/* filet tiré du logo : deux traits qui se croisent puis filent, un trait corail qui s'arrête sur un point */
+.filet{display:flex;align-items:center;height:8px;width:100%}
+.filet .fl{position:relative;flex:1;height:8px}
+.filet .fl i.c{position:absolute;left:0;top:3px;height:2px;right:10px;background:var(--filet-ac);border-radius:1px}
+.filet .fl i.c::after{content:"";position:absolute;right:-9px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--filet-ac)}
+.filet.short{width:180px}
+.vD .surt::after,.vD .surt.c::before{display:none}
+.surt-row{display:flex;align-items:center;gap:18px}
+.surt-row .surt{flex:none}
+.surt-row .filet{flex:1}
+.sec-row{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.sec-row .sec-label{flex:none;margin:0}
+.sec-row .filet{flex:1;max-width:320px}
+.hero-filet{margin-top:72px}
+.vC.vD .hero{border-bottom:0}
+.final .filet{margin:0 auto 22px}
+.vC .flow .dot,.vD .chain .dot{font-family:var(--f-mono)}
+
+/* ---------- A « Sobre » : la trame telle quelle, corail réservé ---------- */
+/* (rien de plus : tokens de base) */
+
+/* ---------- B « Corail actif » : le corail porte l'action et le rythme ---------- */
+.pB{--cta-bg:#F0503C;--cta-fg:#101418}
+.pB .cta{font-weight:600}
+.pB .cta.ghost{background:transparent;color:var(--ink)}
+.pB h1 em{color:var(--accent)}
+.pB .sec-label{color:var(--accent-ink)}
+.pB .chain li:not(:last-child)::after{background:var(--accent)}
+.pB .flow .wire{background:var(--accent)}
+.pB .flow .dot{border-color:var(--accent)}
+.pB .ticket{border-top:4px solid var(--accent)}
+.pB .vD .toc .n,.pB ol.toc .n{color:var(--accent-ink)}
+.pB .final{background:var(--accent);--ink:#101418;--ink-2:#2A1410;--filet:#101418;--filet-ac:#fff;--cta2-bg:#101418;--cta2-fg:#fff}
+.pB .final .surt{color:#101418}
+.pB .r-end{background:var(--accent);color:#101418}
+
+/* ---------- C « Secondaire » : un bleu pétrole pour l'information, corail pour l'action ---------- */
+.pC{--sec:#1E5E66;--sec-tint:#EAF2F2;--sec-line:#C5DADB;--filet:var(--sec)}
+.pC .surt,.pC .sec-label,.pC ol.toc .n,.pC .ticket header,.pC .loop,.pC .r-body h2 span,.pC .r-sum h4,.pC .crumb a{color:var(--sec)}
+.pC .ticket header span:last-child{color:var(--accent-ink)}
+.pC .tag{background:var(--sec-tint);border-color:var(--sec-line);color:var(--sec)}
+.pC .chain .dot,.pC .flow .dot{border-color:var(--sec);color:var(--sec)}
+.pC .chain li:not(:last-child)::after,.pC .flow .wire{background:var(--sec)}
+.pC .sec.s2{background:var(--sec-tint);border-bottom-color:var(--sec-line)}
+.pC .ticket{border-color:var(--sec-line)}
+.pC .promise li::before{color:var(--sec)}
+
+/* ---------- D « Bandes encre » : les sections sombres reprennent la tuile ---------- */
+.pD .nav,.pD .hero,.pD .sec.s3,.pD .final{
+  --bg:#101418;--surface:#1A2027;--ink:#FFFFFF;--ink-2:#C4CAD2;--muted:#98A1AC;--line:#2A313A;--line-strong:#3D4550;
+  --accent-ink:#F0503C;--cta-bg:#F0503C;--cta-fg:#101418;--cta2-bg:#F0503C;--cta2-fg:#101418;
+  --filet:#FFFFFF;--tile-bg:#FFFFFF;--tile-fg:#101418;--nav-bg:rgba(16,20,24,.94);
+  background:var(--bg);color:var(--ink)}
+.pD .nav{background:var(--nav-bg);border-bottom-color:#2A313A}
+.pD .hero .cta.ghost,.pD .final .cta.ghost{color:#fff}
+.pD h1 em{color:var(--accent)}
+.pD .sec.s3 .flow li:not(:last-child) .dot{background:var(--bg)}
+.pD .sec.s3 .promise{background:var(--surface)}
+.pD .vC.vD .sec{border-bottom:0}
+
+/* ---------- E : A + bandes encre seulement en haut et sur l'appel final ---------- */
+.pE .sec.s3{--bg:#FAFAF8;--surface:#fff;--ink:#101418;--ink-2:#3B424B;--muted:#5C6570;--line:#E1E3E6;--line-strong:#C3C8CE;
+  --accent-ink:#C7362A;--cta-bg:#101418;--cta-fg:#fff;--filet:#101418;background:transparent;color:var(--ink)}
+
+/* E : petit texte jamais en corail sur l'encre (lisibilité, daltonisme) ; le corail reste au filet, au point, aux boutons */
+.pE .surt{color:var(--ink-2)}
+.pE .hero .surt{font-size:15px;letter-spacing:.01em}
+/* dégradé léger sur les bandes encre (?grad=1) */
+body.grad.pD .hero,body.grad.pD .final{background:radial-gradient(ellipse 80% 110% at 100% 0%,#1F2731 0%,#101418 65%)}
+body.grad.pD .nav{background:#101418}
+
+/* =====================================================================
+   PLANCHE — logo, filets, contrastes, typographies, impression
+   ===================================================================== */
+.pl{padding:56px 0 120px}
+.pl h2{margin:0 0 8px}
+.pl .blk{padding:48px 0;border-bottom:1px solid var(--line)}
+.pl .hint{margin:0 0 28px;color:var(--ink-2);max-width:720px}
+.pl .row{display:flex;flex-wrap:wrap;gap:20px;align-items:stretch}
+.pl .pan{border:1px solid var(--line-strong);border-radius:8px;padding:28px;display:flex;flex-direction:column;gap:14px;justify-content:center;background:#fff}
+.pl .pan.dk{background:#101418;border-color:#101418;--ink:#fff;--muted:#98A1AC;--tile-bg:#fff;--tile-fg:#101418;--filet:#fff}
+.pl .pan.co{background:#F0503C;border-color:#F0503C;--filet:#101418;--filet-ac:#fff}
+.pl .pan small{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pl .pan.dk small{color:#98A1AC}.pl .pan.co small{color:#101418}
+.pl .favs{display:flex;align-items:flex-end;gap:18px}
+.pl .favs div{display:flex;flex-direction:column;align-items:center;gap:6px}
+.pl .tab{display:flex;align-items:center;gap:8px;background:#E8EAED;border-radius:8px 8px 0 0;padding:8px 12px;font:13px system-ui,sans-serif;color:#202124;width:220px}
+table.ct{width:100%;border-collapse:collapse;font-size:15px;background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+table.ct th,table.ct td{text-align:left;padding:10px 14px;border-top:1px solid var(--line);vertical-align:middle}
+table.ct th{font-family:var(--f-mono);font-weight:500;font-size:12px;color:var(--muted);background:#FCFCFB;border-top:0}
+table.ct .sw{display:inline-flex;align-items:center;justify-content:center;min-width:132px;height:36px;padding:0 12px;border-radius:4px;font-weight:600;font-size:15px;border:1px solid rgba(0,0,0,.08)}
+table.ct .r{font-family:var(--f-mono)}
+table.ct .ok{color:#1F7A3E}table.ct .mid{color:#9A6A00}table.ct .ko{color:#C7362A;font-weight:600}
+table.ct tr.used td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+table.ct tr.unused{opacity:.45}
+@media (max-width:760px){table.ct .hide-m{display:none}}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.swatches div{border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;background:#fff;font-family:var(--f-mono);font-size:12px}
+.swatches i{display:block;height:64px}
+.swatches p{margin:0;padding:8px 10px;color:#3B424B}
+.spec-t{display:grid;grid-template-columns:200px 1fr;gap:0;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);overflow:hidden}
+.spec-t>div{display:contents}
+.spec-t dt{padding:18px;font-family:var(--f-mono);font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.spec-t dd{margin:0;padding:18px;border-top:1px solid var(--line)}
+.spec-t>div:first-child dt,.spec-t>div:first-child dd{border-top:0}
+@media (max-width:700px){.spec-t{grid-template-columns:1fr}.spec-t dd{border-top:0;padding-top:0}}
+.cards{display:flex;flex-wrap:wrap;gap:28px}
+.cards figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.cards figcaption{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.bc{width:340px;height:220px;border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.10);position:relative;overflow:hidden;background:#fff}
+.bc.front{padding:26px 26px}
+.bc.front .who{position:absolute;left:26px;bottom:24px;font-size:11px;line-height:1.55;color:#3B424B}
+.bc.front .who b{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12px;color:#101418}
+.bc.back{background:#101418;color:#fff;padding:26px;--filet:#fff;--tile-bg:#fff;--tile-fg:#101418}
+.bc.back .qr{position:absolute;right:24px;bottom:24px;width:64px;height:64px;background:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font:10px var(--f-mono);color:#101418}
+.bc.back .url{position:absolute;left:26px;bottom:26px;font:11px var(--f-mono);color:#F0503C}
+.bc.back .filet{position:absolute;left:26px;right:26px;top:96px;width:auto}
+.gray{filter:grayscale(1)}
+.cmyk{margin-top:20px;font-family:var(--f-mono);font-size:13px;color:var(--ink-2);display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px 24px}
+.vC.vD .final h2{color:var(--ink)}
+.vD ol.toc{font-family:var(--f-body)}
+.pB .final h2{color:#101418}
+.pB .final p{color:#2A1410}
+
+/* =====================================================================
+   MOUVEMENT — jetons communs
+   ===================================================================== */
+:root{--e-out:cubic-bezier(.2,.7,.2,1);--e-draw:cubic-bezier(.65,0,.35,1);--d-hover:140ms;--d-ui:220ms;--d-draw:700ms}
+.vC .cta::after{display:inline-block;transition:transform var(--d-hover) var(--e-out)}
+.cta{transition:filter var(--d-hover),box-shadow var(--d-hover),background-color var(--d-hover)}
+.cta:hover{filter:brightness(1.12)}
+.cta:hover::after{transform:translateX(3px)}
+.more,.ticket a,.nav nav a.l{transition:text-underline-offset var(--d-hover) var(--e-out),color var(--d-hover)}
+.more:hover,.ticket a:hover{text-underline-offset:8px}
+.ticket{transition:border-color var(--d-hover),transform var(--d-ui) var(--e-out),box-shadow var(--d-ui) var(--e-out)}
+.ticket:hover{border-color:var(--accent-ink)}
+.brand .mark .pt{transition:transform var(--d-ui) var(--e-out)}
+.brand:hover .mark .pt{transform:translateX(2px)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.modal-bg.open .modal{animation:pop var(--d-ui) var(--e-out)}
+.modal-bg.open{animation:fade var(--d-ui) linear}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}}
+@keyframes fade{from{opacity:0}}
+
+/* ---------- B « Le trait guide » et C « Circuit » : logo tracé au chargement ---------- */
+.mB .nav .mark.draw path,.mC .nav .mark.draw path{stroke-dasharray:1 1;stroke-dashoffset:1;opacity:0}
+.mB .nav .mark.draw .pt,.mC .nav .mark.draw .pt{transform:scale(0);transform-origin:54.5px 32px}
+.nav .mark.draw.go path{opacity:1;stroke-dashoffset:0;transition:stroke-dashoffset 520ms var(--e-draw)}
+.nav .mark.draw.go .b2{transition-delay:90ms}
+.nav .mark.draw.go .ac{transition-duration:480ms;transition-delay:320ms}
+.nav .mark.draw.go .pt{transform:none;transition:transform 260ms var(--e-out) 760ms}
+
+/* chaîne 1 → 2 → 3 du haut de page (B et C : au chargement) */
+.mB .chain li .dot,.mC .chain li .dot{opacity:0;transform:scale(.4);transition:transform 320ms var(--e-out),opacity 200ms;transition-delay:calc(var(--i)*380ms)}
+.mB .chain li>span:nth-child(2),.mC .chain li>span:nth-child(2){opacity:0;transition:opacity 300ms;transition-delay:calc(var(--i)*380ms + 80ms)}
+.mB .chain li::after,.mC .chain li::after{transform:scaleX(0);transform-origin:left;transition:transform 380ms var(--e-draw);transition-delay:calc(var(--i)*380ms + 180ms)}
+.mB .chain.in li .dot,.mC .chain.in li .dot,.mB .chain.in li>span:nth-child(2),.mC .chain.in li>span:nth-child(2){opacity:1;transform:none}
+.mB .chain.in li::after,.mC .chain.in li::after{transform:none}
+
+/* ---------- B : filets tracés à l'entrée dans l'écran, une fois ---------- */
+.mB .filet .fl i.c{transform:scaleX(0);transform-origin:left;transition:transform var(--d-draw) var(--e-draw)}
+.mB .filet .fl i.c::after{opacity:0;transform:scale(0);transition:opacity 160ms,transform 260ms var(--e-out);transition-delay:calc(var(--d-draw) - 60ms)}
+.mB .filet.in .fl i.c{transform:none}
+.mB .filet.in .fl i.c::after{opacity:1;transform:scaleX(1)}
+/* étapes qui s'allument en séquence */
+.mB .flow li .wire{transform:scaleX(0);transform-origin:left;transition:transform 420ms var(--e-draw);transition-delay:calc(var(--i)*240ms + 140ms)}
+.mB .flow li .dot{transition:border-color 200ms,background-color 200ms,color 200ms;transition-delay:calc(var(--i)*240ms)}
+.mB .flow:not(.in) li .dot{border-color:var(--line-strong);color:var(--muted);background:var(--surface)}
+.mB .flow.in li .wire{transform:none}
+
+/* ---------- C : lié au défilement ---------- */
+.mC .filet .fl i.c{transform:scaleX(var(--p,0));transform-origin:left;transition:transform 120ms linear}
+.mC .filet .fl i.c::after{opacity:0;transition:opacity 160ms}
+.mC .filet.done .fl i.c::after{opacity:1}
+.mC .flow li .wire{transform:scaleX(var(--p,0));transform-origin:left;transition:transform 120ms linear}
+.mC .flow li .dot{transition:border-color 200ms,background-color 200ms,color 200ms}
+.mC .flow li:not(.lit) .dot{border-color:var(--line-strong);color:var(--muted);background:var(--surface)}
+.prog{position:absolute;left:0;right:0;bottom:-1px;height:2px;pointer-events:none}
+.prog i{position:absolute;left:0;top:0;height:2px;width:calc(var(--p,0)*100%);background:var(--accent)}
+.prog i::after{content:"";position:absolute;right:-4px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* ---------- D « Révélations » : fondu et glissement de chaque bloc ---------- */
+.mD [data-r]{opacity:0;transform:translateY(14px);transition:opacity 500ms var(--e-out),transform 500ms var(--e-out);transition-delay:calc(var(--i,0)*70ms)}
+.mD [data-r].in{opacity:1;transform:none}
+.mD .ticket.in:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(14,22,38,.10);transition-delay:0s}
+
+/* ---------- mouvement réduit : état final, rien ne bouge ---------- */
+body.rm *,body.rm *::before,body.rm *::after{transition:none!important;animation:none!important}
+
+/* ---------- panneau « principes » du prototype (hors design) ---------- */
+#fiche{position:fixed;right:16px;bottom:72px;z-index:99;width:min(360px,calc(100vw - 32px));max-height:60vh;overflow:auto;background:#111;color:#eee;border-radius:12px;padding:16px 18px;
+  font:13px/1.5 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+#fiche[hidden]{display:none}
+#fiche h3{margin:0 0 8px;font-size:14px;color:#fff}
+#fiche dl{margin:0;display:grid;grid-template-columns:96px 1fr;gap:6px 10px}
+#fiche dt{color:#999}#fiche dd{margin:0}
+#fiche p{margin:10px 0 0;color:#aaa}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="modal-bg" id="brief" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="brief-t">
+    <div class="steps" aria-label="Étape 1 sur 3"><span class="on"></span><span></span><span></span></div>
+    <h2 id="brief-t">Décrivez votre besoin</h2>
+    <label for="brief-txt">Ce qui vous fait perdre du temps aujourd'hui</label>
+    <textarea id="brief-txt" placeholder="Par exemple : nos techniciens remplissent des bons d'intervention papier, ressaisis le soir au bureau…"></textarea>
+    <p class="note">Vous pouvez aussi dicter votre besoin. Le micro ne s'active qu'après votre clic.</p>
+    <div class="row">
+      <button class="cta ghost" type="button">Dicter</button>
+      <div style="display:flex;gap:10px">
+        <button class="cta ghost" type="button" data-close>Fermer</button>
+        <button class="cta" type="button">Continuer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="proto" role="toolbar" aria-label="Bascule du prototype">
+  <button type="button" id="prev" aria-label="Variante précédente">←</button>
+  <span class="lbl" id="lbl"></span>
+  <button type="button" id="next" aria-label="Variante suivante">→</button>
+  <span class="sep"></span>
+  <button type="button" data-page="accueil">Accueil</button>
+  <button type="button" data-page="recit">Récit</button>
+  <span class="sep"></span>
+  <button type="button" id="replay" title="Recharger la page en haut">rejouer</button>
+  <button type="button" id="rmb" title="Simuler prefers-reduced-motion">réduit : non</button>
+  <button type="button" id="fb" title="Principes de la variante">principes</button>
+</div>
+<aside id="fiche" hidden></aside>
+
+<script>
+// ---------- contenu (issu des tickets résolus) ----------
+const C = {
+  surtitre: "Optimisation opérationnelle & outils sur mesure",
+  sousTitre: "Un regard extérieur, opérationnel et technique, sur votre fonctionnement : je repère les points de friction, puis je conçois et construis les outils sur mesure qui les suppriment, avec ou sans IA. Et j'en assure la maintenance dans la durée.",
+  approche: [
+    ["Un regard extérieur", "J'analyse votre fonctionnement tel qu'il est, pas tel qu'il est écrit."],
+    ["L'humain libéré", "L'outil prend les tâches ingrates ; votre équipe garde ce qui demande du jugement."],
+    ["Des propositions neuves", "Pas de catalogue : une réponse pensée pour votre cas, IA comprise quand elle sert."],
+    ["Mesurable", "Le temps passé est compté avant, puis après la mise en service."],
+    ["Adapté à vous", "L'outil s'adapte à votre façon de travailler, pas l'inverse."]
+  ],
+  frictions: [
+    "Les bons d'intervention papier sont ressaisis le soir au bureau.",
+    "Les mêmes données sont ressaisies dans plusieurs outils.",
+    "Le bilan de la semaine est monté à la main, tous les vendredis.",
+    "Les demandes reçues par e-mail sont recopiées à la main."
+  ],
+  etapes: [
+    ["Échange", "Votre brief, puis un appel."],
+    ["Devis ou diagnostic", "Besoin cadré : devis au forfait, gratuit. Besoin à explorer : un diagnostic sur place, sur un nombre de jours convenu."],
+    ["Construction", "Des livraisons régulières. Pour un projet important, une première version mise en service pour affiner en conditions réelles."],
+    ["Mise en service et mesure", "Temps passé avant et après, puis la maintenance prend le relais si vous le souhaitez."]
+  ],
+  duree: "Aucune durée minimale ni maximale : d'une demi-journée pour un besoin précis à plusieurs mois pour un projet important.",
+  garanties: ["Prix ferme connu avant de commencer", "Devis rapide", "Vous êtes propriétaire du code et des outils"],
+  recit: {
+    titre: "PUM : un outil de coordination d'équipes sur mesure pour les paroisses",
+    chapo: "J'ai vécu de l'intérieur les difficultés de coordination des célébrations dans plusieurs paroisses. J'en ai fait un service ouvert à toutes : preparerunemesse.fr, en bêta avec ses premiers utilisateurs.",
+    friction: "[À recueillir : comment se préparait une messe avant, ce qui se perdait.]",
+    solution: "Un service commun : calendrier des messes, équipes, choix des chants et programme. Plusieurs paroisses sur une même instance.",
+    resultat: "En production, en bêta, avec des utilisateurs. [Avant/après à vérifier.]",
+    fiche: [["Cadre","Projet personnel"],["Rôle","Conception et développement"],["Période","Sept. 2026 → en cours"],["Statut","En bêta"],["Stack","Go"]],
+    date: "Novembre 2026", lecture: "[x] min de lecture",
+    sections: ["Le point de friction", "La démarche", "Le système", "Le résultat", "Ce que j'en retiens"]
+  },
+  autres: [
+    ["Poste · lead technique", "Lizee : automatiser les commandes de transport avec une dizaine de transporteurs"],
+    ["Mission", "SambaÉdu : la refonte d'un logiciel métier pour les écoles du Val-d'Oise"]
+  ]
+};
+const body = (n=2) => Array.from({length:n}, () => `<p class="ph">[Texte du récit, rédigé en binôme. Ce paragraphe tient la place d'un développement réel : il sert à juger la lecture longue, la taille du corps, l'interlignage et le rythme entre titres, paragraphes et illustrations.]</p>`).join("");
+
+// ---------- logo 7b : faisceau en tuile, croisement, avec son point ----------
+function mark(size, label, old){
+  if (old) return markOld(size);
+  const a = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"';
+  return `<svg class="mark" width="${size}" height="${size}" viewBox="0 0 64 64" ${a}>
+<rect width="64" height="64" rx="14" style="fill:var(--tile-bg)"/>
+<g fill="none" stroke-width="4.5" stroke-linecap="round">
+<path class="b1" pathLength="1" d="M10 42 C19 42 23 22 32 22 L45 22" style="stroke:var(--tile-fg)"/>
+<path class="b2" pathLength="1" d="M10 22 C19 22 23 42 32 42 L45 42" style="stroke:var(--tile-fg)"/>
+<path class="ac" pathLength="1" d="M10 32 L48 32" style="stroke:var(--tile-ac)"/></g>
+<circle class="pt" cx="54.5" cy="32" r="3.4" style="fill:var(--tile-ac)"/></svg>`;
+}
+function markOld(size){
+  return `<svg class="mark" width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
+<rect width="64" height="64" rx="14" style="fill:var(--tile-bg)"/>
+<g fill="none" stroke-width="4.5" stroke-linecap="round">
+<path d="M13 42 C22 42 26 22 35 22 L51 22" style="stroke:var(--tile-fg)"/>
+<path d="M13 22 C22 22 26 42 35 42 L51 42" style="stroke:var(--tile-fg)"/>
+<path d="M13 32 L44 32" style="stroke:var(--tile-ac)"/></g>
+<circle cx="51" cy="32" r="3.4" style="fill:var(--tile-ac)"/></svg>`;
+}
+function lockup(size, nameSize, baseSize, style=''){
+  const g = Math.round(size*.25), gv = Math.max(4, Math.round(size*.09));
+  return `<div class="lockup" style="gap:${g}px;${style}">${mark(size, 'Henri Touchard')}<div class="t" style="gap:${gv*2}px"><b style="font-size:${nameSize}px">Henri Touchard</b><span style="font-size:${baseSize}px">Optimisation opérationnelle</span></div></div>`;
+}
+// filet tiré du logo : croisement à gauche, deux traits qui filent, trait corail qui s'arrête sur un point
+const filet = (cls='') => `<div class="filet ${cls}" aria-hidden="true"><span class="fl"><i class="c"></i></span></div>`;
+
+function navBar(page){
+  return `<header class="nav"><div class="wrap">
+    <a class="brand" href="?page=accueil" data-go="accueil">${mark(36)}<b>Henri Touchard</b></a>
+    <nav aria-label="Navigation principale">
+      <a class="l" href="?page=recit" data-go="recit" ${page==='recit'?'aria-current="page"':''}>Expériences et réalisations</a>
+      <a class="l" href="#">À propos</a>
+      <a class="cta" href="#" data-brief>Décrivez votre besoin</a>
+    </nav></div></header>`;
+}
+const footer = () => `<footer><div class="wrap"><span>Henri Touchard · Optimisation opérationnelle</span><span>Mentions légales et confidentialité</span></div></footer>`;
+const secHead = (label) => `<div class="sec-row"><p class="sec-label">${label}</p>${filet()}</div>`;
+
+// ---------- accueil (structure E) ----------
+const accueil = () => `${navBar('accueil')}<main>
+  <section class="hero"><div class="wrap">
+    <div class="surt-row"><p class="surt">${C.surtitre.toLowerCase()}</p>${filet()}</div>
+    <div class="hero-grid">
+      <h1>J'optimise vos processus <em>là où ça compte</em>, pour que votre équipe se concentre sur ce qui a de la valeur.</h1>
+      <aside><p class="lede">${C.sousTitre}</p>
+        <div class="btns"><a class="cta" href="#" data-brief>Décrivez votre besoin</a><a class="more" href="?page=recit" data-go="recit">voir des réalisations →</a></div></aside>
+    </div>
+    <ol class="chain">
+      <li><span class="dot">1</span><span><b>Repérage et analyse</b> des points de friction</span></li>
+      <li><span class="dot">2</span><span><b>Construction</b> d'outils sur mesure</span></li>
+      <li><span class="dot">3</span><span><b>Maintien</b> dans la durée</span></li>
+    </ol>
+  </div></section>
+  <section class="sec s1"><div class="wrap sec-head">
+    <div>${secHead('01 / approche')}<h2>Comment je regarde votre fonctionnement</h2></div>
+    <ol class="toc">${C.approche.map((a,i)=>`<li><span class="n">0${i+1}</span><div><h3>${a[0]}</h3><p>${a[1]}</p></div></li>`).join("")}</ol>
+  </div></section>
+  <section class="sec s2"><div class="wrap">
+    ${secHead('02 / points de friction')}<h2>Ça vous parle ?</h2>
+    <div class="tickets">${C.frictions.map((f,i)=>`<article class="ticket"><header><span>friction-0${i+1}</span><span>● à optimiser</span></header><p>${f}</p><a href="#" data-brief>décrire votre besoin →</a></article>`).join("")}</div>
+  </div></section>
+  <section class="sec s3"><div class="wrap">
+    ${secHead('03 / comment je travaille')}<h2>Un processus en quatre étapes</h2>
+    <ol class="flow">${C.etapes.map((e,i)=>`<li><div class="node"><span class="dot">${i+1}</span><span class="wire"></span></div><h3>${e[0]}</h3><p>${e[1]}</p></li>`).join("")}</ol>
+    <p class="loop">↻ puis maintenance mensuelle, facultative et sans engagement long</p>
+    <div class="promise"><div><p class="sec-label">mes engagements</p><ul>${C.garanties.map(g=>`<li>${g}</li>`).join("")}</ul></div>
+      <div><p class="sec-label" style="margin-bottom:12px">durée</p><p>${C.duree}</p></div></div>
+  </div></section>
+  <section class="final"><div class="wrap">
+    ${filet('short')}
+    <h2>Un processus vous coûte du temps ?</h2>
+    <p>Décrivez-le en quelques lignes, à l'écrit ou à la voix. Je vous réponds avec une première lecture du problème.</p>
+    <a class="cta" href="#" data-brief>Décrivez votre besoin</a>
+  </div></section></main>${footer()}`;
+
+const recit = () => { const R=C.recit; return `${navBar('recit')}<main>
+  <header class="r-head wrap"><div class="surt-row"><p class="surt">expériences et réalisations</p>${filet()}</div>
+    <h1 class="r-title">${R.titre}</h1><p class="r-chapo">${R.chapo}</p>
+    <p class="r-meta">${R.date.toLowerCase()} · ${R.lecture}</p></header>
+  <div class="wrap r-grid">
+    <dl class="margin">${R.fiche.map(f=>`<div><dt>${f[0].toLowerCase()}</dt><dd>${f[1]}</dd></div>`).join("")}</dl>
+    <article>
+      <div class="r-sum"><div class="b"><h4>friction</h4><p>${R.friction}</p></div><span class="arr">→</span><div class="b"><h4>solution</h4><p>${R.solution}</p></div><span class="arr">→</span><div class="b"><h4>résultat</h4><p>${R.resultat}</p></div></div>
+      <div class="r-body">
+        ${R.sections.map((s,i)=>`<h2><span>0${i+1}</span>${s}</h2>${body(i===1?2:1)}${i===2?'<div class="fig">capture : calendrier des messes · schéma des équipes</div>':''}`).join("")}
+      </div>
+      <div class="r-end"><h3>Un point de friction qui ressemble au vôtre ?</h3><a class="cta" href="#" data-brief>Décrivez votre besoin</a></div>
+      <div class="r-next">${C.autres.map(a=>`<a href="#"><small>${a[0].toLowerCase()}</small><b>${a[1]}</b></a>`).join("")}</div>
+    </article><div></div>
+  </div></main>${footer()}`; };
+
+// ---------- planche : logo, filets, contrastes, typo, impression ----------
+let HEX = {fond:'#FAFAF8', blanc:'#FFFFFF', encre:'#101418', 'texte 2':'#3B424B', discret:'#5C6570', corail:'#F0503C', 'corail foncé':'#C7362A', pétrole:'#1E5E66'};
+function lum(h){ const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)); return .2126*c[0]+.7152*c[1]+.0722*c[2]; }
+const ratio = (a,b) => { const [x,y]=[lum(a),lum(b)].sort((m,n)=>n-m); return (x+.05)/(y+.05); };
+// [texte, fond, usage, variantes qui l'emploient]
+const PAIRS = [
+  ['encre','fond','texte courant, titres','ABCDE'],
+  ['texte 2','fond','sous-titre, paragraphes secondaires','ABCDE'],
+  ['discret','fond','libellés mono, pied de page','ABCDE'],
+  ['corail','fond','« là où ça compte » en grand titre','B'],
+  ['corail foncé','fond','liens, libellés, petit texte d\'accent','ABCDE'],
+  ['blanc','corail','bouton corail à texte blanc','—'],
+  ['encre','corail','bouton corail à texte encre, bandeau corail','B'],
+  ['blanc','corail foncé','bouton de l\'appel final','AC'],
+  ['corail','encre','accent sur section sombre, verso de carte','DE'],
+  ['blanc','encre','texte sur section sombre','ABCDE'],
+  ['pétrole','fond','libellés et numéros (secondaire)','C'],
+];
+function verdict(r){ return r>=7?['AAA','ok']:r>=4.5?['AA','ok']:r>=3?['grand texte seulement','mid']:['insuffisant','ko']; }
+function pairRows(v){ return PAIRS.map(([t,b,u,vs])=>{ const r=ratio(HEX[t],HEX[b]); const [l,c]=verdict(r); const used=vs.includes(v);
+  return `<tr class="${used?'used':'unused'}"><td><span class="sw" style="color:${HEX[t]};background:${HEX[b]}">${t} / ${b}</span></td><td class="r">${r.toFixed(2)}:1</td><td class="${c}">${l}</td><td class="hide-m">${u}</td></tr>`; }).join(''); }
+const CMYK = [['corail #F0503C','C0 M67 Y75 K6 (conversion brute)'],['corail foncé #C7362A','C0 M73 Y79 K22 (conversion brute)'],['encre #101418','noir enrichi, à caler avec l\'imprimeur'],['discret #5C6570','C18 M10 Y0 K56 (conversion brute)']];
+
+const planche = (v) => `${navBar('planche')}<main><div class="wrap pl">
+  <div class="surt-row"><p class="surt">planche de contrôle · variante ${v}</p>${filet()}</div>
+  <section class="blk"><h2>Le point au-delà des branches</h2>
+    <p class="hint">À gauche, le 7b validé : le point s'aligne sur le bout des branches. À droite : branches raccourcies, trait corail prolongé, le point les dépasse. Plus droit, et plus loin.</p>
+    <div class="row">
+      <div class="pan" style="flex:1 1 340px"><div class="favs">${mark(96,'',1)}${mark(48,'',1)}${mark(32,'',1)}${mark(16,'',1)}</div><small>avant · point aligné</small></div>
+      <div class="pan" style="flex:1 1 340px"><div class="favs">${mark(96)}${mark(48)}${mark(32)}${mark(16)}</div><small>après · point au-delà</small></div>
+      <div class="pan dk" style="flex:1 1 340px"><div class="favs">${mark(96)}${mark(48)}${mark(32)}${mark(16)}</div><small>après · sur encre</small></div>
+    </div>
+  </section>
+  <section class="blk"><h2>Logo et typographie du nom</h2>
+    <p class="hint">Le nom en Space Grotesk 600 et la ligne en IBM Plex Sans, à côté de la tuile. Les traits du logo font 4,5/64 de la tuile, soit 2,5 px à 36 px.</p>
+    <div class="row">
+      <div class="pan" style="flex:2 1 420px">${lockup(88,34,15)}<small>complète · fond clair</small></div>
+      <div class="pan dk" style="flex:1 1 260px">${lockup(44,18,10)}<small>complète · fond encre</small></div>
+    </div>
+    <div class="row" style="margin-top:20px">
+      <div class="pan" style="flex:1 1 200px"><div style="display:flex;gap:16px">${mark(64)}<span style="--tile-ac:#fff">${mark(64)}</span></div><small>marque seule · monochrome</small></div>
+      <div class="pan dk" style="flex:1 1 200px"><div style="display:flex;gap:16px">${mark(64)}<span style="--tile-ac:#101418">${mark(64)}</span></div><small>sur encre · monochrome</small></div>
+      <div class="pan" style="flex:1 1 280px"><div class="favs">${[16,24,32,48].map(s=>`<div>${mark(s)}<small>${s}</small></div>`).join('')}</div>
+        <div class="tab">${mark(16)}<span>Henri Touchard · Optimisa…</span></div><small>favicon · tailles réelles</small></div>
+    </div>
+  </section>
+  <section class="blk"><h2>Filets</h2>
+    <p class="hint">Le trait corail du logo, seul, avec son point : il file plus loin que tout le reste. Sur clair, sur encre, sur corail.</p>
+    <div class="row">
+      <div class="pan" style="flex:1 1 300px">${filet()}<small>fond clair</small></div>
+      <div class="pan dk" style="flex:1 1 300px">${filet()}<small>fond encre</small></div>
+      <div class="pan co" style="flex:1 1 300px">${filet()}<small>fond corail</small></div>
+    </div>
+  </section>
+  <section class="blk"><h2>Couleurs et contrastes</h2>
+    <p class="hint">Calcul WCAG. Les lignes marquées d'un trait corail sont employées par la variante ${v} ; les autres sont grisées. Seuils : 4,5:1 pour le texte courant, 3:1 pour le grand texte (24 px, ou 19 px gras) et les éléments graphiques.</p>
+    <div class="swatches">${Object.entries(HEX).map(([n,h])=>`<div><i style="background:${h}"></i><p>${n}<br>${h}</p></div>`).join('')}</div>
+    <table class="ct"><thead><tr><th>paire</th><th>contraste</th><th>verdict</th><th class="hide-m">usage</th></tr></thead><tbody>${pairRows(v)}</tbody></table>
+  </section>
+  <section class="blk"><h2>Typographies</h2>
+    <p class="hint">Les trois familles aux tailles du site.</p>
+    <dl class="spec-t">
+      <div><dt>h1 · Space Grotesk 600 · 74 px</dt><dd><span style="font-family:'Space Grotesk';font-weight:600;font-size:clamp(36px,5.6vw,74px);line-height:1.04;letter-spacing:-.03em">Là où ça compte</span></dd></div>
+      <div><dt>h2 · Space Grotesk 600 · 40 px</dt><dd><span style="font-family:'Space Grotesk';font-weight:600;font-size:40px;line-height:1.12;letter-spacing:-.02em">Un processus en quatre étapes</span></dd></div>
+      <div><dt>h3 · Space Grotesk 600 · 20 px</dt><dd><span style="font-family:'Space Grotesk';font-weight:600;font-size:20px">Mise en service et mesure</span></dd></div>
+      <div><dt>texte · IBM Plex Sans 400 · 18 px</dt><dd><span style="font-size:18px;line-height:1.6">${C.sousTitre}</span></dd></div>
+      <div><dt>libellé · IBM Plex Mono 400 · 13 px</dt><dd><span style="font-family:'IBM Plex Mono';font-size:13px;color:var(--accent-ink)">02 / points de friction · friction-01 · ● à optimiser</span></dd></div>
+    </dl>
+  </section>
+  <section class="blk"><h2>Impression</h2>
+    <p class="hint">Carte de visite 85 × 55 mm, à l'échelle de l'écran. En niveaux de gris : le corail doit rester lisible et se distinguer de l'encre.</p>
+    <div class="cards">
+      <figure><div class="bc front">${lockup(40,17,9)}<div class="who"><b>Henri Touchard</b><br>06 00 00 00 00 · contact@henritouchard.fr<br>henritouchard.fr</div></div><figcaption>recto · couleur</figcaption></figure>
+      <figure><div class="bc back">${mark(40)}${filet()}<span class="url">henritouchard.fr/brief</span><div class="qr">QR</div></div><figcaption>verso · couleur</figcaption></figure>
+      <figure class="gray"><div class="bc front">${lockup(40,17,9)}<div class="who"><b>Henri Touchard</b><br>06 00 00 00 00 · contact@henritouchard.fr<br>henritouchard.fr</div></div><figcaption>recto · niveaux de gris</figcaption></figure>
+      <figure class="gray"><div class="bc back">${mark(40)}${filet()}<span class="url">henritouchard.fr/brief</span><div class="qr">QR</div></div><figcaption>verso · niveaux de gris</figcaption></figure>
+    </div>
+    <div class="cmyk">${CMYK.map(c=>`<span><b>${c[0]}</b><br>${c[1]}</span>`).join('')}</div>
+    <p class="hint" style="margin-top:16px">Conversions brutes, sans profil : point de départ, à valider sur l'épreuve Vistaprint.</p>
+  </section>
+</div></main>${footer()}`;
+
+// ---------- variantes de mouvement (palette fixée : E, encre nuit, dégradé) ----------
+const COMMUN = "Communs à toutes : survols et focus (140 ms), ouverture de la modale (220 ms), seuls transform et opacity animés, jamais le grand titre (premier affichage), aucune boucle. prefers-reduced-motion : état final immédiat.";
+const V = {
+  A: {name:'Sobre — survols seulement', f:[
+    ['déclencheur','survol et focus, rien d\'autre'],['durées','140 ms survol · 220 ms modale'],['courbe','sortie cubic-bezier(.2,.7,.2,1)'],
+    ['logo','fixe ; au survol, le point avance de 2 px'],['filets','fixes'],['coût','nul : CSS seul']]},
+  B: {name:'Le trait guide — tracés à l\'entrée', f:[
+    ['logo','tracé au premier chargement : branches, puis trait corail, puis le point (< 1 s)'],
+    ['chaîne 1→2→3','se construit à l\'arrivée, 380 ms par maillon'],
+    ['filets','se tracent quand ils entrent à l\'écran, une seule fois (700 ms), le point se pose à la fin'],
+    ['4 étapes','s\'allument en séquence à l\'entrée de la section (240 ms d\'écart)'],
+    ['courbes','tracé (.65,0,.35,1) · sortie (.2,.7,.2,1)'],['coût','IntersectionObserver, quelques lignes de JS']]},
+  C: {name:'Circuit — lié au défilement', f:[
+    ['logo','tracé au premier chargement, comme B'],['chaîne 1→2→3','comme B'],
+    ['filets','leur longueur suit le défilement ; le point se pose quand le trait est complet'],
+    ['4 étapes','s\'allument une à une au fil du défilement, le fil se remplit'],
+    ['lecture','fil corail sous la barre de navigation : progression de la page, point en tête'],
+    ['coût','écouteur de défilement + requestAnimationFrame']]},
+  D: {name:'Révélations — fondu des blocs', f:[
+    ['déclencheur','entrée à l\'écran, une fois'],['blocs','fondu + glissement de 14 px, décalés de 70 ms'],
+    ['cartes','se soulèvent au survol'],['logo, filets','fixes'],['durées','500 ms sortie'],['coût','IntersectionObserver']]},
+};
+const PAGES = {accueil, recit};
+const keys = Object.keys(V);
+function state(){ const p=new URLSearchParams(location.search); return {v: keys.includes(p.get('variant'))?p.get('variant'):'A', page: PAGES[p.get('page')]?p.get('page'):'accueil'}; }
+function go(v, page){ const p=new URLSearchParams(location.search); p.set('variant',v); p.set('page',page); history.replaceState(null,'','?'+p); render(); }
+const INKS = { neutre:['#101418','#1A2027','#2A313A','#3D4550','#1F2731'], nuit:['#0E1626','#172235','#263248','#37455C','#1C2840'] };
+const styleEl = document.querySelector('style'); const baseCSS = styleEl.textContent;
+const tint = txt => INKS.neutre.reduce((t,h,i)=>t.split(h).join(INKS.nuit[i]), txt);
+styleEl.textContent = tint(baseCSS);
+const rmParam = () => new URLSearchParams(location.search).get('rm')==='1';
+const isRM = () => rmParam() || matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
+let io;
+function render(){
+  const s = state(), rm = isRM();
+  document.body.className = `vC vD vE pD pE grad m${s.v}` + (rm?' rm':'');
+  document.getElementById('app').innerHTML = tint(PAGES[s.page]('E'));
+  document.getElementById('lbl').textContent = `${s.v} · ${V[s.v].name} — ${s.page}`;
+  document.getElementById('rmb').textContent = 'réduit : ' + (rmParam()?'oui':'non');
+  document.querySelectorAll('#proto [data-page]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.page===s.page));
+  document.getElementById('fiche').innerHTML = `<h3>${s.v} · ${V[s.v].name}</h3><dl>${V[s.v].f.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl><p>${COMMUN}</p><p>Mouvement réduit : ${rm?'actif, tout est à l\'état final':'inactif'}.</p>`;
+  arm(s.v, rm);
+}
+function arm(v, rm){
+  io && io.disconnect();
+  // index de décalage pour les séquences
+  document.querySelectorAll('.chain, .flow, .toc, .tickets, .r-next, .r-body').forEach(l=>[...l.children].forEach((c,i)=>c.style.setProperty('--i',i)));
+  if (v==='D') document.querySelectorAll('.hero aside, .sec h2, .toc li, .ticket, .flow li, .loop, .promise, .final h2, .final p, .final .cta, .r-sum, .r-body > *, .r-end, .r-next a').forEach(el=>el.setAttribute('data-r',''));
+  const all = document.querySelectorAll('.filet, .chain, .flow, [data-r]');
+  if (rm || v==='A'){ all.forEach(t=>t.classList.add('in')); document.querySelectorAll('.filet').forEach(f=>{f.style.setProperty('--p',1);f.classList.add('done')}); document.querySelectorAll('.flow li').forEach(li=>{li.classList.add('lit');li.style.setProperty('--p',1)}); return; }
+  if (v==='B' || v==='C'){ const m=document.querySelector('.nav .mark'); m.classList.add('draw'); requestAnimationFrame(()=>requestAnimationFrame(()=>m.classList.add('go'))); }
+  if (v==='C'){ document.querySelector('.nav').insertAdjacentHTML('beforeend','<div class="prog" aria-hidden="true"><i></i></div>'); scrollFx(); }
+  const watched = v==='C' ? document.querySelectorAll('.chain') : all;
+  io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.3, rootMargin:'0px 0px -8% 0px'});
+  requestAnimationFrame(()=>watched.forEach(t=>io.observe(t)));
+}
+// C : longueurs liées au défilement
+let ticking=false;
+function scrollFx(){
+  if (state().v!=='C' || isRM()) return;
+  const vh=innerHeight;
+  document.querySelectorAll('.filet').forEach(f=>{ const r=f.getBoundingClientRect(); const p=clamp((vh*.92 - r.top)/(vh*.45),0,1); f.style.setProperty('--p',p.toFixed(3)); f.classList.toggle('done',p>=.999); });
+  const fl=document.querySelector('.flow'); if (fl){ const r=fl.getBoundingClientRect(); const p=clamp((vh*.85 - r.top)/(vh*.5),0,1); [...fl.children].forEach((li,i)=>{ const lp=clamp(p*4-i,0,1); li.style.setProperty('--p',lp.toFixed(3)); li.classList.toggle('lit',lp>.02); }); }
+  const pr=document.querySelector('.prog i'); if (pr){ const h=document.documentElement.scrollHeight-vh; pr.style.setProperty('--p',h>0?(scrollY/h).toFixed(4):0); }
+}
+addEventListener('scroll',()=>{ if(!ticking){ ticking=true; requestAnimationFrame(()=>{ticking=false;scrollFx();}); } },{passive:true});
+addEventListener('resize',scrollFx);
+document.getElementById('replay').onclick = () => { window.scrollTo(0,0); render(); };
+document.getElementById('rmb').onclick = () => { const p=new URLSearchParams(location.search); rmParam()?p.delete('rm'):p.set('rm','1'); history.replaceState(null,'','?'+p); render(); };
+document.getElementById('fb').onclick = () => { const f=document.getElementById('fiche'); f.hidden=!f.hidden; document.getElementById('fb').setAttribute('aria-pressed',!f.hidden); };
+const cycle = d => { const s=state(); go(keys[(keys.indexOf(s.v)+d+keys.length)%keys.length], s.page); };
+document.getElementById('prev').onclick = () => cycle(-1);
+document.getElementById('next').onclick = () => cycle(1);
+document.querySelectorAll('#proto [data-page]').forEach(b => b.onclick = () => { window.scrollTo(0,0); go(state().v, b.dataset.page); });
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input,textarea,[contenteditable]')) return;
+  if (e.key==='ArrowLeft') cycle(-1); if (e.key==='ArrowRight') cycle(1);
+  if (e.key==='Escape') closeBrief();
+});
+const modal = document.getElementById('brief');
+const closeBrief = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); };
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g){ e.preventDefault(); window.scrollTo(0,0); go(state().v, g.dataset.go); return; }
+  if (e.target.closest('[data-brief]')){ e.preventDefault(); modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); document.getElementById('brief-txt').focus(); return; }
+  if (e.target.closest('[data-close]') || e.target===modal) closeBrief();
+});
+render();
+</script>
+</body>
+</html>
