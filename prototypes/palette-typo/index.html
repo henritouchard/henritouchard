@@ -236,12 +236,9 @@ button{font:inherit;cursor:pointer}
 .lockup .t span{font-family:'IBM Plex Sans',sans-serif;line-height:1;color:var(--muted)}
 
 /* filet tiré du logo : deux traits qui se croisent puis filent, un trait corail qui s'arrête sur un point */
-.filet{display:flex;align-items:flex-start;height:16px;width:100%;color:var(--filet)}
-.filet svg{flex:none;overflow:visible}
-.filet .fl{position:relative;flex:1;height:16px}
-.filet .fl i{position:absolute;left:0;right:var(--i-end,30%);height:1px;background:currentColor;opacity:var(--filet-op,.55)}
-.filet .fl i:nth-child(1){top:2px}.filet .fl i:nth-child(3){top:13px}
-.filet .fl i.c{top:7px;height:2px;right:10px;background:var(--filet-ac);border-radius:0 2px 2px 0;opacity:1}
+.filet{display:flex;align-items:center;height:8px;width:100%}
+.filet .fl{position:relative;flex:1;height:8px}
+.filet .fl i.c{position:absolute;left:0;top:3px;height:2px;right:10px;background:var(--filet-ac);border-radius:1px}
 .filet .fl i.c::after{content:"";position:absolute;right:-9px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--filet-ac)}
 .filet.short{width:180px}
 .vD .surt::after,.vD .surt.c::before{display:none}
@@ -294,9 +291,13 @@ button{font:inherit;cursor:pointer}
 .pD .nav{background:var(--nav-bg);border-bottom-color:#2A313A}
 .pD .hero .cta.ghost,.pD .final .cta.ghost{color:#fff}
 .pD h1 em{color:var(--accent)}
-.pD .sec.s3 .flow .dot{background:var(--bg)}
+.pD .sec.s3 .flow li:not(:last-child) .dot{background:var(--bg)}
 .pD .sec.s3 .promise{background:var(--surface)}
 .pD .vC.vD .sec{border-bottom:0}
+
+/* ---------- E : A + bandes encre seulement en haut et sur l'appel final ---------- */
+.pE .sec.s3{--bg:#FAFAF8;--surface:#fff;--ink:#101418;--ink-2:#3B424B;--muted:#5C6570;--line:#E1E3E6;--line-strong:#C3C8CE;
+  --accent-ink:#C7362A;--cta-bg:#101418;--cta-fg:#fff;--filet:#101418;background:transparent;color:var(--ink)}
 
 /* =====================================================================
    PLANCHE — logo, filets, contrastes, typographies, impression
@@ -451,9 +452,7 @@ function lockup(size, nameSize, baseSize, style=''){
   return `<div class="lockup" style="gap:${g}px;${style}">${mark(size, 'Henri Touchard')}<div class="t" style="gap:${gv*2}px"><b style="font-size:${nameSize}px">Henri Touchard</b><span style="font-size:${baseSize}px">Optimisation opérationnelle</span></div></div>`;
 }
 // filet tiré du logo : croisement à gauche, deux traits qui filent, trait corail qui s'arrête sur un point
-const filet = (cls='') => `<div class="filet ${cls}" aria-hidden="true"><svg width="28" height="16" viewBox="0 0 28 16"><g fill="none" stroke-linecap="round">
-<g stroke="currentColor" stroke-width="1" style="opacity:var(--filet-op,.55)"><path d="M1 13.5 C8 13.5 10 2.5 17 2.5 L28 2.5"/><path d="M1 2.5 C8 2.5 10 13.5 17 13.5 L28 13.5"/></g><path d="M1 8 L29 8" stroke-width="2" style="stroke:var(--filet-ac)"/></g></svg>
-<span class="fl"><i></i><i class="c"></i><i></i></span></div>`;
+const filet = (cls='') => `<div class="filet ${cls}" aria-hidden="true"><span class="fl"><i class="c"></i></span></div>`;
 
 function navBar(page){
   return `<header class="nav"><div class="wrap">
@@ -526,16 +525,16 @@ function lum(h){ const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>
 const ratio = (a,b) => { const [x,y]=[lum(a),lum(b)].sort((m,n)=>n-m); return (x+.05)/(y+.05); };
 // [texte, fond, usage, variantes qui l'emploient]
 const PAIRS = [
-  ['encre','fond','texte courant, titres','ABCD'],
-  ['texte 2','fond','sous-titre, paragraphes secondaires','ABCD'],
-  ['discret','fond','libellés mono, pied de page','ABCD'],
-  ['corail','fond','« là où ça compte » en grand titre','BD'],
-  ['corail foncé','fond','liens, libellés, petit texte d\'accent','ABCD'],
+  ['encre','fond','texte courant, titres','ABCDE'],
+  ['texte 2','fond','sous-titre, paragraphes secondaires','ABCDE'],
+  ['discret','fond','libellés mono, pied de page','ABCDE'],
+  ['corail','fond','« là où ça compte » en grand titre','B'],
+  ['corail foncé','fond','liens, libellés, petit texte d\'accent','ABCDE'],
   ['blanc','corail','bouton corail à texte blanc','—'],
   ['encre','corail','bouton corail à texte encre, bandeau corail','B'],
   ['blanc','corail foncé','bouton de l\'appel final','AC'],
-  ['corail','encre','accent sur section sombre, verso de carte','D'],
-  ['blanc','encre','texte sur section sombre','ABCD'],
+  ['corail','encre','accent sur section sombre, verso de carte','DE'],
+  ['blanc','encre','texte sur section sombre','ABCDE'],
   ['pétrole','fond','libellés et numéros (secondaire)','C'],
 ];
 function verdict(r){ return r>=7?['AAA','ok']:r>=4.5?['AA','ok']:r>=3?['grand texte seulement','mid']:['insuffisant','ko']; }
@@ -567,7 +566,7 @@ const planche = (v) => `${navBar('planche')}<main><div class="wrap pl">
     </div>
   </section>
   <section class="blk"><h2>Filets</h2>
-    <p class="hint">L'élément graphique tiré du logo, en séparateur. Sur clair, sur encre, sur corail.</p>
+    <p class="hint">Le trait corail du logo, seul, avec son point : il file plus loin que tout le reste. Sur clair, sur encre, sur corail.</p>
     <div class="row">
       <div class="pan" style="flex:1 1 300px">${filet()}<small>fond clair</small></div>
       <div class="pan dk" style="flex:1 1 300px">${filet()}<small>fond encre</small></div>
@@ -608,6 +607,7 @@ const V = {
   B: {name:'Corail actif', cls:'pB'},
   C: {name:'Secondaire pétrole', cls:'pC'},
   D: {name:'Bandes encre', cls:'pD'},
+  E: {name:'A + bandes encre (haut et appel final)', cls:'pD pE'},
 };
 const PAGES = {accueil, recit, planche};
 const keys = Object.keys(V);
