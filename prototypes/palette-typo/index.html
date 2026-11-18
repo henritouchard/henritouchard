@@ -223,7 +223,7 @@ button{font:inherit;cursor:pointer}
    PALETTE ET LOGO 7b — surcharges communes aux quatre variantes
    ===================================================================== */
 .vC{--accent:#F0503C;--accent-ink:#C7362A;--tint:#FEEEEB;--tint-line:#F8C9C1;--sec:#101418;
-  --filet:var(--ink);--filet-ac:var(--accent);--c-end:38%;
+  --filet:var(--ink);--filet-ac:var(--accent);
   --tile-bg:#101418;--tile-fg:#fff;--tile-ac:#F0503C;
   --cta2-bg:#C7362A;--cta2-fg:#fff}
 .vC .tag{background:var(--tint);border-color:var(--tint-line)}
@@ -236,13 +236,13 @@ button{font:inherit;cursor:pointer}
 .lockup .t span{font-family:'IBM Plex Sans',sans-serif;line-height:1;color:var(--muted)}
 
 /* filet tiré du logo : deux traits qui se croisent puis filent, un trait corail qui s'arrête sur un point */
-.filet{display:flex;align-items:flex-start;height:24px;width:100%;color:var(--filet)}
+.filet{display:flex;align-items:flex-start;height:16px;width:100%;color:var(--filet)}
 .filet svg{flex:none;overflow:visible}
-.filet .fl{position:relative;flex:1;height:24px}
-.filet .fl i{position:absolute;left:-1px;right:0;height:2px;background:currentColor}
-.filet .fl i:nth-child(1){top:3px}.filet .fl i:nth-child(3){top:19px}
-.filet .fl i.c{top:11px;right:var(--c-end);background:var(--filet-ac);border-radius:0 2px 2px 0}
-.filet .fl i.c::after{content:"";position:absolute;right:-10px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--filet-ac)}
+.filet .fl{position:relative;flex:1;height:16px}
+.filet .fl i{position:absolute;left:0;right:var(--i-end,30%);height:1px;background:currentColor;opacity:var(--filet-op,.55)}
+.filet .fl i:nth-child(1){top:2px}.filet .fl i:nth-child(3){top:13px}
+.filet .fl i.c{top:7px;height:2px;right:10px;background:var(--filet-ac);border-radius:0 2px 2px 0;opacity:1}
+.filet .fl i.c::after{content:"";position:absolute;right:-9px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--filet-ac)}
 .filet.short{width:180px}
 .vD .surt::after,.vD .surt.c::before{display:none}
 .surt-row{display:flex;align-items:center;gap:18px}
@@ -260,7 +260,7 @@ button{font:inherit;cursor:pointer}
 /* (rien de plus : tokens de base) */
 
 /* ---------- B « Corail actif » : le corail porte l'action et le rythme ---------- */
-.pB{--cta-bg:#F0503C;--cta-fg:#101418;--c-end:0%}
+.pB{--cta-bg:#F0503C;--cta-fg:#101418}
 .pB .cta{font-weight:600}
 .pB .cta.ghost{background:transparent;color:var(--ink)}
 .pB h1 em{color:var(--accent)}
@@ -426,9 +426,19 @@ const C = {
 const body = (n=2) => Array.from({length:n}, () => `<p class="ph">[Texte du récit, rédigé en binôme. Ce paragraphe tient la place d'un développement réel : il sert à juger la lecture longue, la taille du corps, l'interlignage et le rythme entre titres, paragraphes et illustrations.]</p>`).join("");
 
 // ---------- logo 7b : faisceau en tuile, croisement, avec son point ----------
-function mark(size, label){
+function mark(size, label, old){
+  if (old) return markOld(size);
   const a = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"';
   return `<svg class="mark" width="${size}" height="${size}" viewBox="0 0 64 64" ${a}>
+<rect width="64" height="64" rx="14" style="fill:var(--tile-bg)"/>
+<g fill="none" stroke-width="4.5" stroke-linecap="round">
+<path d="M10 42 C19 42 23 22 32 22 L45 22" style="stroke:var(--tile-fg)"/>
+<path d="M10 22 C19 22 23 42 32 42 L45 42" style="stroke:var(--tile-fg)"/>
+<path d="M10 32 L48 32" style="stroke:var(--tile-ac)"/></g>
+<circle cx="54.5" cy="32" r="3.4" style="fill:var(--tile-ac)"/></svg>`;
+}
+function markOld(size){
+  return `<svg class="mark" width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
 <rect width="64" height="64" rx="14" style="fill:var(--tile-bg)"/>
 <g fill="none" stroke-width="4.5" stroke-linecap="round">
 <path d="M13 42 C22 42 26 22 35 22 L51 22" style="stroke:var(--tile-fg)"/>
@@ -441,8 +451,8 @@ function lockup(size, nameSize, baseSize, style=''){
   return `<div class="lockup" style="gap:${g}px;${style}">${mark(size, 'Henri Touchard')}<div class="t" style="gap:${gv*2}px"><b style="font-size:${nameSize}px">Henri Touchard</b><span style="font-size:${baseSize}px">Optimisation opérationnelle</span></div></div>`;
 }
 // filet tiré du logo : croisement à gauche, deux traits qui filent, trait corail qui s'arrête sur un point
-const filet = (cls='') => `<div class="filet ${cls}" aria-hidden="true"><svg width="40" height="24" viewBox="0 0 40 24"><g fill="none" stroke-width="2" stroke-linecap="round">
-<path d="M1 20 C10 20 14 4 24 4 L41 4" stroke="currentColor"/><path d="M1 4 C10 4 14 20 24 20 L41 20" stroke="currentColor"/><path d="M1 12 L41 12" style="stroke:var(--filet-ac)"/></g></svg>
+const filet = (cls='') => `<div class="filet ${cls}" aria-hidden="true"><svg width="28" height="16" viewBox="0 0 28 16"><g fill="none" stroke-linecap="round">
+<g stroke="currentColor" stroke-width="1" style="opacity:var(--filet-op,.55)"><path d="M1 13.5 C8 13.5 10 2.5 17 2.5 L28 2.5"/><path d="M1 2.5 C8 2.5 10 13.5 17 13.5 L28 13.5"/></g><path d="M1 8 L29 8" stroke-width="2" style="stroke:var(--filet-ac)"/></g></svg>
 <span class="fl"><i></i><i class="c"></i><i></i></span></div>`;
 
 function navBar(page){
@@ -535,6 +545,14 @@ const CMYK = [['corail #F0503C','C0 M67 Y75 K6 (conversion brute)'],['corail fon
 
 const planche = (v) => `${navBar('planche')}<main><div class="wrap pl">
   <div class="surt-row"><p class="surt">planche de contrôle · variante ${v}</p>${filet()}</div>
+  <section class="blk"><h2>Le point au-delà des branches</h2>
+    <p class="hint">À gauche, le 7b validé : le point s'aligne sur le bout des branches. À droite : branches raccourcies, trait corail prolongé, le point les dépasse. Plus droit, et plus loin.</p>
+    <div class="row">
+      <div class="pan" style="flex:1 1 340px"><div class="favs">${mark(96,'',1)}${mark(48,'',1)}${mark(32,'',1)}${mark(16,'',1)}</div><small>avant · point aligné</small></div>
+      <div class="pan" style="flex:1 1 340px"><div class="favs">${mark(96)}${mark(48)}${mark(32)}${mark(16)}</div><small>après · point au-delà</small></div>
+      <div class="pan dk" style="flex:1 1 340px"><div class="favs">${mark(96)}${mark(48)}${mark(32)}${mark(16)}</div><small>après · sur encre</small></div>
+    </div>
+  </section>
   <section class="blk"><h2>Logo et typographie du nom</h2>
     <p class="hint">Le nom en Space Grotesk 600 et la ligne en IBM Plex Sans, à côté de la tuile. Les traits du logo font 4,5/64 de la tuile, soit 2,5 px à 36 px.</p>
     <div class="row">
