@@ -86,12 +86,21 @@ svg{display:block}
 .og.B .fil{position:absolute;left:0;right:80px;bottom:92px}
 
 /* C — Triptyque : les branches du logo entrent par la gauche, le trait sort à droite jusqu'au point */
-.og.C{background:var(--paper);color:var(--nuit)}
-.og.C .side{position:absolute;top:0;bottom:0;width:285px;overflow:hidden}
-.og.C .side.l{left:0}.og.C .side.r{right:0}
-.og.C .side svg{position:absolute;top:50%;transform:translateY(-50%)}
-.og.C .name{margin-top:28px;color:#3A4352}
-.og.C .stack svg{margin-bottom:30px}
+.og.C,.og.Cc{color:var(--nuit)}
+.og.Cc{background:var(--paper)}
+.og.C{color:#fff}
+.og.C .side,.og.Cc .side{position:absolute;top:0;bottom:0;width:285px;overflow:hidden}
+.og.C .side.l,.og.Cc .side.l{left:0}.og.C .side.r,.og.Cc .side.r{right:0}
+.og.C .side svg,.og.Cc .side svg{position:absolute;top:120px}
+.og.C .stack,.og.Cc .stack{justify-content:flex-start;padding-top:120px}
+.og.C .stack svg,.og.Cc .stack svg{margin-bottom:20px}
+.og.C h3,.og.Cc h3{font-size:76px}
+.og .sub{font:500 34px/1.1 var(--f-d);letter-spacing:-.01em;margin-top:14px}
+.og .comp{display:flex;align-items:center;justify-content:center;gap:14px;font:400 21px/1.2 var(--f-b);margin-top:24px;white-space:nowrap}
+.og .comp i{width:8px;height:8px;border-radius:50%;background:var(--coral);flex:none}
+.og .who{font:400 20px/1 var(--f-m);margin-top:26px;letter-spacing:.02em}
+.og.C .sub{color:#fff}.og.C .comp{color:var(--gris)}.og.C .who{color:var(--muted)}
+.og.Cc .sub{color:var(--nuit)}.og.Cc .comp{color:#3A4352}.og.Cc .who{color:#5A616B}
 
 /* D — Tuile au centre : la tuile en grand, ses traits prolongés jusqu'aux bords */
 .og.D{color:#fff}
@@ -208,7 +217,10 @@ const tabRow = () => `<div class="tab"><i class="ghost" style="background:#4285F
   <div class="tab"><i class="ghost" style="background:#0A66C2"></i><span>LinkedIn</span></div>`;
 
 /* =================== Open Graph : une seule image pour tout le site =================== */
-const SITE = {intitule:'Optimisation<br>opérationnelle'};
+const SITE = {intitule:'Optimisation<br>opérationnelle', sub:'&amp; outils sur mesure',
+  comp:['Automatisation des processus','Logiciel sur mesure','Intégration de l\'IA'], url:'henritouchard.fr'};
+const fullText = () => `<h3>${SITE.intitule}</h3><div class="sub">${SITE.sub}</div>
+  <div class="comp">${SITE.comp.map((c,i)=>(i?'<i></i>':'')+`<span>${c}</span>`).join('')}</div><div class="who">Henri Touchard · ${SITE.url}</div>`;
 // la page partagée ne change que le titre affiché sous l'image (og:title), pas l'image
 const PAGES = {
   accueil:{nom:'Accueil', titre:'Automatisation des processus & logiciel sur mesure – Henri Touchard'},
@@ -217,10 +229,10 @@ const PAGES = {
   apropos:{nom:'À propos', titre:'À propos – Henri Touchard'},
 };
 // moitiés du logo pour le triptyque : branches à gauche, trait et point à droite
-const branchesL = () => `<svg width="285" height="420" viewBox="0 0 285 420" aria-hidden="true"><g fill="none" stroke-width="16" stroke-linecap="round">
-  <path d="M-40 330 C90 330 150 90 285 90" stroke="#0E1626"/><path d="M-40 90 C90 90 150 330 285 330" stroke="#0E1626"/><path d="M-40 210 L285 210" stroke="#F0503C"/></g></svg>`;
-const traitR = () => `<svg width="285" height="420" viewBox="0 0 285 420" aria-hidden="true"><g fill="none" stroke-width="16" stroke-linecap="round">
-  <path d="M0 90 L120 90" stroke="#0E1626"/><path d="M0 330 L120 330" stroke="#0E1626"/><path d="M0 210 L170 210" stroke="#F0503C"/></g><circle cx="215" cy="210" r="13" fill="#F0503C"/></svg>`;
+const branchesL = (c='#0E1626') => `<svg width="285" height="320" viewBox="0 0 285 320" aria-hidden="true"><g fill="none" stroke-width="16" stroke-linecap="round">
+  <path d="M-40 250 C90 250 150 70 285 70" stroke="${c}"/><path d="M-40 70 C90 70 150 250 285 250" stroke="${c}"/><path d="M-40 160 L285 160" stroke="#F0503C"/></g></svg>`;
+const traitR = (c='#0E1626') => `<svg width="285" height="320" viewBox="0 0 285 320" aria-hidden="true"><g fill="none" stroke-width="16" stroke-linecap="round">
+  <path d="M0 70 L120 70" stroke="${c}"/><path d="M0 250 L120 250" stroke="${c}"/><path d="M0 160 L170 160" stroke="#F0503C"/></g><circle cx="215" cy="160" r="13" fill="#F0503C"/></svg>`;
 // rails de D : les deux branches et le trait de la tuile prolongés jusqu'aux bords
 const rails = () => `<svg width="1200" height="630" viewBox="0 0 1200 630" aria-hidden="true"><g fill="none" stroke-width="3" stroke-linecap="round">
   <path d="M0 143 L490 143" stroke="#37455C"/><path d="M710 143 L1200 143" stroke="#37455C"/>
@@ -233,8 +245,10 @@ const OG = {
      html:() => `<div class="og A glow"><div class="stack">${mark({size:120, glow:true, title:'Henri Touchard'})}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div><div class="fil"></div></div></div>`},
   B:{nom:'Le trait traverse', note:'Fond clair, l\'intitulé en très grand au centre. Le trait corail file sous le texte d\'un bord à l\'autre jusqu\'au point. Une fine bande encre en haut rappelle la barre de navigation.',
      html:() => `<div class="og B"><div class="topline"></div><div class="stack">${mark({size:96, glow:true, title:'Henri Touchard'})}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div><div class="fil"></div></div>`},
-  C:{nom:'Triptyque', note:'Fond clair. Le logo est ouvert en deux : ses branches entrent par la gauche, son trait sort à droite jusqu\'au point ; l\'intitulé et le nom au centre.',
-     html:() => `<div class="og C"><div class="side l">${branchesL()}</div><div class="stack">${mark({size:96, glow:true, title:'Henri Touchard'})}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div><div class="side r">${traitR()}</div></div>`},
+  C:{nom:'Triptyque nuit', note:'Encre nuit et lueur. Le logo est ouvert en deux : ses branches blanches entrent par la gauche, son trait corail sort à droite jusqu\'au point. Au centre, la tuile, l\'intitulé en grand, puis le texte complet. Les petits textes ne se lisent pas en vignette de messagerie, mais l\'intitulé reste lisible.',
+     html:() => `<div class="og C glow"><div class="side l">${branchesL('#FFFFFF')}</div><div class="stack">${mark({size:64, glow:true, title:'Henri Touchard'}).replace('<rect','<rect stroke="#37455C" stroke-width=".8"')}${fullText()}</div><div class="side r">${traitR('#FFFFFF')}</div></div>`},
+  Cc:{nom:'Triptyque clair', note:'La même composition sur fond clair, pour comparer (et pour la carte de visite).',
+     html:() => `<div class="og Cc"><div class="side l">${branchesL()}</div><div class="stack">${mark({size:64, glow:true, title:'Henri Touchard'})}${fullText()}</div><div class="side r">${traitR()}</div></div>`},
   D:{nom:'Tuile au centre', note:'Encre nuit, la tuile en grand au centre ; ses deux branches et son trait se prolongent en filets fins jusqu\'aux bords, le point se pose à droite.',
      html:() => `<div class="og D glow"><div class="rails">${rails()}</div><div class="stack">${mark({size:200, glow:true, title:'Henri Touchard'}).replace('<rect','<rect stroke="#37455C" stroke-width=".6"')}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div></div>`},
 };
@@ -267,7 +281,7 @@ function ogView(key, pk){
 /* =================== barre du prototype =================== */
 const q = new URLSearchParams(location.search);
 let vue = q.get('vue') === 'og' ? 'og' : (q.get('vue') === 'favicon' ? 'favicon' : 'og');
-let vf = FAV[q.get('variant')] ? q.get('variant') : 'F1', vo = OG[q.get('variant')] ? q.get('variant') : 'A';
+let vf = FAV[q.get('variant')] ? q.get('variant') : 'F2', vo = OG[q.get('variant')] ? q.get('variant') : 'C';
 let ck = PAGES[q.get('page')] ? q.get('page') : 'pum';
 function render(){
   const p = new URLSearchParams({vue, variant: vue==='og'?vo:vf}); if (vue==='og') p.set('page', ck);
