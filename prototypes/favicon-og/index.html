@@ -95,11 +95,15 @@ svg{display:block}
 .og.C{color:#fff}
 .og.C .side,.og.Cc .side{position:absolute;top:0;bottom:0;width:285px;overflow:hidden}
 .og.C .side.l,.og.Cc .side.l{left:0}.og.C .side.r,.og.Cc .side.r{right:0}
-.og.C .side svg,.og.Cc .side svg{position:absolute;top:120px}
-.og.C .stack,.og.Cc .stack{justify-content:flex-start;padding-top:120px}
+.og.C .side svg,.og.Cc .side svg{position:absolute;top:50%;transform:translateY(-50%)}
+.og.C .stack,.og.Cc .stack{justify-content:center;padding-top:0}
 .og.C .stack svg,.og.Cc .stack svg{margin-bottom:20px}
-.og.C h3,.og.Cc h3{font-size:76px}
-.og .sub{font:500 34px/1.1 var(--f-d);letter-spacing:-.01em;margin-top:14px}
+.og.C h3,.og.Cc h3{font-size:66px}
+.og .ccomp{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;align-items:flex-start;gap:9px;font:400 21px/1.2 var(--f-b);text-align:left}
+.og .ccomp li{display:flex;align-items:center;gap:12px}
+.og .ccomp i{width:7px;height:7px;border-radius:50%;background:var(--coral);flex:none}
+.og.C .ccomp{color:var(--gris)}.og.Cc .ccomp{color:#3A4352}
+.og .sub{font:500 30px/1.1 var(--f-d);letter-spacing:-.01em;margin-top:12px}
 .og .comp{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;font:400 21px/1.2 var(--f-b);margin-top:22px;max-width:560px;white-space:nowrap}
 .og .scomp{position:absolute;top:418px;width:225px;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px;font:400 22px/1.25 var(--f-b)}
 .og .scomp.l{left:40px}.og .scomp.r{left:935px}
@@ -107,7 +111,7 @@ svg{display:block}
 .og .scomp li i{position:absolute;left:0;top:10px;width:8px;height:8px;border-radius:50%;background:var(--coral)}
 .og.C .scomp{color:var(--gris)}.og.Cc .scomp{color:#3A4352}
 .og .comp i{width:8px;height:8px;border-radius:50%;background:var(--coral);flex:none}
-.og .who{font:400 20px/1 var(--f-m);margin-top:30px;letter-spacing:.02em}
+.og .who{font:400 19px/1 var(--f-m);margin-top:26px;letter-spacing:.02em}
 .og.C .sub{color:#fff}.og.C .comp{color:var(--gris)}.og.C .who{color:var(--muted)}
 .og.Cc .sub{color:var(--nuit)}.og.Cc .comp{color:#3A4352}.og.Cc .who{color:#5A616B}
 
@@ -229,7 +233,7 @@ const tabRow = () => `<div class="tab"><i class="ghost" style="background:#4285F
 const SITE = {intitule:'Optimisation<br>opérationnelle', sub:'&amp; outils sur mesure',
   comp:['Automatisation des processus','Logiciel sur mesure','Intégration de l\'IA'], url:'henritouchard.fr'};
 const sideComp = (items, cls) => `<ul class="scomp ${cls}">${items.map(c=>`<li><i></i>${c}</li>`).join('')}</ul>`;
-const fullText = () => `<h3>${SITE.intitule}</h3><div class="sub">${SITE.sub}</div>
+const fullText = () => `<h3>${SITE.intitule}</h3><div class="sub">${SITE.sub}</div><ul class="ccomp">${SITE.comp.map(c=>`<li><i></i>${c}</li>`).join('')}</ul>
 <div class="who">Henri Touchard · ${SITE.url}</div>`;
 // la page partagée ne change que le titre affiché sous l'image (og:title), pas l'image
 const PAGES = {
@@ -256,9 +260,9 @@ const OG = {
   B:{nom:'Le trait traverse', note:'Fond clair, l\'intitulé en très grand au centre. Le trait corail file sous le texte d\'un bord à l\'autre jusqu\'au point. Une fine bande encre en haut rappelle la barre de navigation.',
      html:() => `<div class="og B"><div class="topline"></div><div class="stack">${mark({size:96, glow:true, title:'Henri Touchard'})}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div><div class="fil"></div></div>`},
   C:{nom:'Triptyque nuit', note:'Encre nuit et lueur. Le logo est ouvert en deux : ses branches blanches entrent par la gauche, son trait corail sort à droite jusqu\'au point. Au centre, la tuile, l\'intitulé en grand, puis le texte complet. Les petits textes ne se lisent pas en vignette de messagerie, mais l\'intitulé reste lisible.',
-     html:() => `<div class="og C glow"><div class="side l">${branchesL('#FFFFFF')}</div><div class="stack">${mark({size:64, glow:true, title:'Henri Touchard'}).replace('<rect','<rect stroke="#37455C" stroke-width=".8"')}${fullText()}</div><div class="side r">${traitR('#FFFFFF')}</div>${sideComp([SITE.comp[0]],'l')}${sideComp(SITE.comp.slice(1),'r')}</div>`},
+     html:() => `<div class="og C glow"><div class="side l">${branchesL('#FFFFFF')}</div><div class="stack">${mark({size:64, glow:true, title:'Henri Touchard'}).replace('<rect','<rect stroke="#37455C" stroke-width=".8"')}${fullText()}</div><div class="side r">${traitR('#FFFFFF')}</div></div>`},
   Cc:{nom:'Triptyque clair', note:'La même composition sur fond clair, pour comparer (et pour la carte de visite).',
-     html:() => `<div class="og Cc"><div class="side l">${branchesL()}</div><div class="stack">${mark({size:64, glow:true, title:'Henri Touchard'})}${fullText()}</div><div class="side r">${traitR()}</div>${sideComp([SITE.comp[0]],'l')}${sideComp(SITE.comp.slice(1),'r')}</div>`},
+     html:() => `<div class="og Cc"><div class="side l">${branchesL()}</div><div class="stack">${mark({size:64, glow:true, title:'Henri Touchard'})}${fullText()}</div><div class="side r">${traitR()}</div></div>`},
   D:{nom:'Tuile au centre', note:'Encre nuit, la tuile en grand au centre ; ses deux branches et son trait se prolongent en filets fins jusqu\'aux bords, le point se pose à droite.',
      html:() => `<div class="og D glow"><div class="rails">${rails()}</div><div class="stack">${mark({size:200, glow:true, title:'Henri Touchard'}).replace('<rect','<rect stroke="#37455C" stroke-width=".6"')}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div></div>`},
 };
