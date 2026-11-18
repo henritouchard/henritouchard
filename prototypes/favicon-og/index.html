@@ -1,0 +1,308 @@
+<!doctype html>
+<!--
+  PROTOTYPE JETABLE — ticket « Favicon et images Open Graph des récits » (#23), carte « Charte graphique Henri Touchard » (#19)
+  Base : logo 7b (faisceau en tuile, croisement, point au-delà des branches), encre nuit #0E1626, corail #F0503C / #C7362A,
+  Space Grotesk + IBM Plex Sans / Mono, filet = trait corail et son point.
+  Deux vues : ?vue=favicon (variantes F1 à F3) · ?vue=og (variantes A à D) · ?contenu=accueil|pum|lizee|samba|long · flèches ← →
+  Ouvrir : xdg-open prototypes/favicon-og/index.html
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Favicon et Open Graph — prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--nuit:#0E1626;--nuit-2:#172235;--nuit-l1:#263248;--nuit-l2:#37455C;--coral:#F0503C;--coral-d:#C7362A;--paper:#FAFAF8;--gris:#C4CAD2;--muted:#98A1AC;
+  --f-d:'Space Grotesk',system-ui,sans-serif;--f-b:'IBM Plex Sans',system-ui,sans-serif;--f-m:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:#E7E8EB;color:#1B1F24;font:15px/1.5 var(--f-b);-webkit-font-smoothing:antialiased;padding:28px 16px 110px}
+.wrap{max-width:1240px;margin:0 auto}
+h1.ph{font:600 22px/1.2 var(--f-d);margin:0 0 4px}
+p.lead{margin:0 0 24px;color:#5A616B;max-width:860px}
+h2.sec{font:600 13px/1 var(--f-m);text-transform:uppercase;letter-spacing:.08em;color:#5A616B;margin:34px 0 12px}
+.grid{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
+.panel{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.panel .cap{font:500 12px/1.3 var(--f-m);color:#6B7280;margin-top:10px}
+.panel.dark{background:#1F2124;color:#E8EAED}
+.panel.dark .cap{color:#9AA0A6}
+svg{display:block}
+
+/* ---------- maquettes navigateur ---------- */
+.tabs{display:flex;align-items:flex-end;gap:2px;padding:8px 10px 0;border-radius:8px 8px 0 0;width:520px;max-width:100%}
+.tab{display:flex;align-items:center;gap:8px;height:34px;padding:0 12px;border-radius:8px 8px 0 0;font:12px/1 system-ui,sans-serif;min-width:0;flex:0 1 220px;overflow:hidden;white-space:nowrap}
+.tab span{overflow:hidden;text-overflow:ellipsis}
+.tab img,.tab canvas{width:16px;height:16px;flex:none}
+.tabs.light{background:#DEE1E6}.tabs.light .tab{color:#3C4043}.tabs.light .tab.on{background:#fff}
+.tabs.dark{background:#202124}.tabs.dark .tab{color:#BDC1C6}.tabs.dark .tab.on{background:#35363A;color:#E8EAED}
+.ghost{width:16px;height:16px;border-radius:3px;flex:none}
+.bar{height:30px;border-radius:0 0 8px 8px;width:520px;max-width:100%}
+.tabs.light+.bar{background:#fff;border-top:1px solid #fff}
+.tabs.dark+.bar{background:#35363A}
+
+.zoom canvas{width:128px;height:128px;image-rendering:pixelated;border-radius:4px;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 0 0/16px 16px}
+.serp{width:420px;max-width:100%;font-family:Arial,sans-serif}
+.serp .head{display:flex;align-items:center;gap:12px}
+.serp .ring{width:28px;height:28px;border-radius:50%;background:#F1F3F4;display:flex;align-items:center;justify-content:center;flex:none}
+.serp .ring img{width:18px;height:18px}
+.serp .site{font-size:14px;color:#202124;line-height:1.25}.serp .url{font-size:12px;color:#4D5156}
+.serp .t{font-size:20px;color:#1A0DAB;margin:6px 0 2px;line-height:1.3}
+.serp .d{font-size:14px;color:#4D5156}
+.home{width:180px;height:200px;border-radius:14px;background:linear-gradient(160deg,#5B6B8A,#2B3550);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff;font:12px system-ui}
+.home img{width:60px;height:60px;border-radius:14px}
+.mask{position:relative;width:160px;height:160px}
+.mask img{width:160px;height:160px;border-radius:50%}
+.mask .safe{position:absolute;inset:16px;border:1.5px dashed rgba(255,255,255,.65);border-radius:50%}
+.sizes{display:flex;align-items:flex-end;gap:18px}
+.sizes figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;font:11px var(--f-m);color:#6B7280}
+
+/* ---------- Open Graph : la carte fait 1200 × 630, mise à l'échelle par transform ---------- */
+.scaler{position:relative;overflow:hidden;border-radius:4px}
+.scaler>.og{position:absolute;left:0;top:0;transform-origin:0 0}
+.og{width:1200px;height:630px;position:relative;overflow:hidden;font-family:var(--f-b)}
+.og .lock{display:flex;align-items:center;gap:20px}
+.og .lock b{display:block;font:600 34px/1.05 var(--f-d);letter-spacing:-.01em}
+.og .lock span{display:block;white-space:nowrap;font:400 21px/1.2 var(--f-b);margin-top:6px}
+.og .sur{font:500 22px/1 var(--f-m);letter-spacing:.06em;text-transform:uppercase}
+.og h3{margin:0;font-family:var(--f-d);font-weight:600;letter-spacing:-.02em}
+.og .url{font:400 22px/1 var(--f-m)}
+.og .fil{position:relative;height:6px;border-radius:3px;background:var(--coral)}
+.og .fil::after{content:"";position:absolute;right:-30px;top:-6px;width:18px;height:18px;border-radius:50%;background:var(--coral)}
+
+/* A — Bande encre */
+.og.A{background:radial-gradient(ellipse 80% 110% at 100% 0%,#1C2840 0%,#0E1626 65%);color:#fff;padding:64px 80px}
+.og.A .lock span{color:var(--gris)}
+.og.A .sur{color:var(--gris);margin-top:66px}
+.og.A h3{margin-top:22px;max-width:1000px}
+.og.A .fil{position:absolute;left:80px;bottom:78px;width:300px}
+.og.A .url{position:absolute;right:80px;bottom:70px;color:var(--muted)}
+
+/* B — Le trait traverse (fond clair, le trait du logo file sur toute la largeur) */
+.og.B{background:var(--paper);color:var(--nuit);padding:70px 80px}
+.og.B .sur{color:var(--coral-d)}
+.og.B h3{margin-top:24px;max-width:1040px}
+.og.B .foot{position:absolute;left:80px;right:80px;bottom:64px;display:flex;align-items:center}
+.og.B .foot .fil{flex:1;margin:0 64px 0 26px}
+.og.B .foot .who{font:600 26px/1 var(--f-d);white-space:nowrap}
+.og.B .foot .who small{display:block;font:400 18px/1 var(--f-b);color:#5A616B;margin-top:8px}
+.og.B .topline{position:absolute;left:0;top:0;right:0;height:14px;background:var(--nuit)}
+
+/* C — Partage : texte sur fond clair, le croisement géant sur encre */
+.og.C{background:var(--paper);color:var(--nuit);display:grid;grid-template-columns:720px 480px}
+.og.C .txt{padding:64px 56px 64px 80px;display:flex;flex-direction:column}
+.og.C .sur{color:var(--coral-d)}
+.og.C h3{margin-top:22px}
+.og.C .who{margin-top:auto;display:flex;flex-direction:column;gap:12px}
+.og.C .who b{font:600 28px/1 var(--f-d)}
+.og.C .who span{font:400 20px/1 var(--f-m);color:#5A616B}
+.og.C .art{position:relative;background:radial-gradient(ellipse 90% 90% at 100% 0%,#1C2840 0%,#0E1626 70%);overflow:hidden}
+.og.C .art svg{position:absolute;left:-190px;top:50%;transform:translateY(-50%)}
+
+/* D — Résultat d'abord */
+.og.D{background:var(--paper);color:var(--nuit)}
+.og.D .top{position:absolute;left:0;top:0;right:0;height:400px;background:radial-gradient(ellipse 80% 120% at 100% 0%,#1C2840 0%,#0E1626 65%);color:#fff;padding:60px 80px}
+.og.D .top .sur{color:var(--gris)}
+.og.D .top .res{font:600 60px/1.08 var(--f-d);letter-spacing:-.02em;margin-top:26px;max-width:1000px}
+.og.D .top .fil{position:absolute;left:80px;bottom:52px;width:240px}
+.og.D .bot{position:absolute;left:80px;right:80px;top:400px;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:40px}
+.og.D .bot h3{font-size:32px;line-height:1.2;font-weight:500;max-width:720px}
+.og.D .bot .lock b{font-size:26px}.og.D .bot .lock span{font-size:17px;color:#5A616B}
+.og .fict{position:absolute;right:12px;top:12px;font:500 14px/1 var(--f-m);background:#FFE58A;color:#3A2E00;padding:6px 8px;border-radius:4px}
+
+/* ---------- maquettes de partage ---------- */
+.li{background:#fff;border-radius:8px;box-shadow:0 0 0 1px rgba(0,0,0,.08);overflow:hidden;font-family:-apple-system,system-ui,sans-serif}
+.li .post{padding:12px 16px 10px;font-size:14px;color:#191919;display:flex;gap:10px;align-items:center}
+.li .post i{width:40px;height:40px;border-radius:50%;background:#C9CED6;flex:none}
+.li .post b{display:block;font-size:14px}.li .post small{color:#666;font-size:12px}
+.li .meta{background:#EEF3F8;padding:8px 12px}
+.li .meta b{display:block;font-size:14px;font-weight:600;color:#191919;line-height:1.3;max-height:2.6em;overflow:hidden}
+.li .meta small{font-size:12px;color:#666}
+.wa{background:#DCF8C6;border-radius:8px;padding:4px;width:320px;font-family:-apple-system,system-ui,sans-serif}
+.wa .card{display:flex;background:#CFE9BA;border-radius:6px;overflow:hidden}
+.wa .card .scaler{border-radius:0;flex:none}
+.wa .card div.tx{padding:6px 8px;font-size:12px;line-height:1.3;color:#111}
+.wa .card div.tx b{display:block;max-height:3.9em;overflow:hidden}
+.wa .card div.tx small{color:#557}
+.wa p{margin:6px 6px 2px;font-size:13px;color:#1F6FB2}
+
+/* ---------- barre du prototype (hors design) ---------- */
+#proto{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:6px;padding:6px;
+  background:#111;color:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:500 13px/1 system-ui,sans-serif;white-space:nowrap;max-width:calc(100vw - 16px);overflow-x:auto}
+#proto button,#proto select{background:#2a2a2a;color:#fff;border:0;border-radius:999px;height:34px;min-width:34px;padding:0 12px;font:inherit;cursor:pointer}
+#proto button.on{background:#F0503C;color:#0E1626}
+#proto .lbl{padding:0 10px;min-width:220px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="proto"></div>
+<script>
+/* =================== logo 7b =================== */
+let uid = 0;
+// forme : 'full' (dessin 7b), 'bold' (renforcé pour les petites tailles), 'trait' (trait et point seuls)
+function mark({size=64, glow=false, rx=14, forme='full', bleed=false, scale=1, title=''}={}){
+  const id = 'g' + (++uid);
+  const bg = glow ? `url(#${id})` : '#0E1626';
+  const defs = glow ? `<defs><radialGradient id="${id}" cx="64" cy="0" r="90" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1A2640"/><stop offset=".7" stop-color="#0E1626"/></radialGradient></defs>` : '';
+  let body;
+  if (forme === 'bold') body = `<g fill="none" stroke-width="6.5" stroke-linecap="round">
+    <path d="M9 43 C18 43 22 21 32 21 L44 21" stroke="#fff"/><path d="M9 21 C18 21 22 43 32 43 L44 43" stroke="#fff"/>
+    <path d="M9 32 L46 32" stroke="#F0503C"/></g><circle cx="54.5" cy="32" r="4.6" fill="#F0503C"/>`;
+  else if (forme === 'trait') body = `<path d="M11 32 L40 32" stroke="#F0503C" stroke-width="8" stroke-linecap="round"/><circle cx="51" cy="32" r="6.5" fill="#F0503C"/>`;
+  else body = `<g fill="none" stroke-width="4.5" stroke-linecap="round">
+    <path d="M10 42 C19 42 23 22 32 22 L45 22" stroke="#fff"/><path d="M10 22 C19 22 23 42 32 42 L45 42" stroke="#fff"/>
+    <path d="M10 32 L48 32" stroke="#F0503C"/></g><circle cx="54.5" cy="32" r="3.4" fill="#F0503C"/>`;
+  const inner = scale !== 1 ? `<g transform="translate(${32-32*scale} ${32-32*scale}) scale(${scale})">${body}</g>` : body;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64"${title?` role="img" aria-label="${title}"`:' aria-hidden="true"'}>${defs}<rect width="64" height="64" rx="${bleed?0:rx}" fill="${bg}"/>${inner}</svg>`;
+}
+const dataURL = svg => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+function raster(svg, px, cls=''){ // rendu réel à px pixels, comme un .png de favicon
+  const c = document.createElement('canvas'); c.width = c.height = px; if (cls) c.className = cls;
+  const img = new Image(); img.onload = () => c.getContext('2d').drawImage(img, 0, 0, px, px); img.src = dataURL(svg);
+  return c;
+}
+
+/* =================== favicon : variantes =================== */
+const FAV = {
+  F1:{nom:'Tuile complète', note:'Le dessin 7b tel quel à toutes les tailles. Nuit uni à 16 px, lueur à partir de 32 px (décidé dans « Quel motif graphique et quel logo définitif ? »).',
+      at:px => ({forme:'full', glow:px>=32})},
+  F2:{nom:'Tuile renforcée en petit', note:'Même dessin, traits épaissis (4,5 → 6,5) et point grossi jusqu\'à 32 px, pour que le croisement survive au pixel. Dessin 7b normal à partir de 48 px.',
+      at:px => ({forme: px<=32 ? 'bold' : 'full', glow:px>=32})},
+  F3:{nom:'Trait et point en petit', note:'À 16 et 32 px, on ne garde que la signature : le trait corail et son point sur la tuile. Le croisement revient à partir de 48 px.',
+      at:px => ({forme: px<=32 ? 'trait' : 'full', glow:px>=32})},
+};
+
+function favView(key){
+  const v = FAV[key], el = document.getElementById('app');
+  const s16 = mark({size:16, ...v.at(16)}), s32 = mark({size:32, ...v.at(32)});
+  el.innerHTML = `
+  <h1 class="ph">Favicon et icônes d'app — ${key} · ${v.nom}</h1>
+  <p class="lead">${v.note}</p>
+
+  <h2 class="sec">Onglets du navigateur (taille réelle, 16 px)</h2>
+  <div class="grid">
+    <div><div class="tabs light">${tabRow()}</div><div class="bar"></div></div>
+    <div><div class="tabs dark">${tabRow()}</div><div class="bar"></div></div>
+  </div>
+
+  <h2 class="sec">Au pixel près (16 et 32 px, agrandis 8× et 4×)</h2>
+  <div class="grid">
+    <div class="panel zoom" id="z16"><div class="cap">favicon.ico 16 px</div></div>
+    <div class="panel zoom" id="z32"><div class="cap">favicon 32 px (écran haute densité)</div></div>
+    <div class="panel"><div class="sizes" id="sizes"></div><div class="cap">taille réelle : 16 · 32 · 48 · 64</div></div>
+  </div>
+
+  <h2 class="sec">Résultat Google (favicon dans un rond)</h2>
+  <div class="panel serp">
+    <div class="head"><div class="ring"><img src="${dataURL(mark({size:48, ...v.at(48)}))}" alt=""></div>
+    <div><div class="site">Henri Touchard</div><div class="url">https://henritouchard.fr › realisations</div></div></div>
+    <div class="t">Automatisation des processus &amp; logiciel sur mesure – Henri Touchard</div>
+    <div class="d">J'optimise vos processus là où ça compte, pour que votre équipe se concentre sur ce qui a de la valeur…</div>
+  </div>
+
+  <h2 class="sec">Icônes d'app (apple-touch-icon 180, Android maskable 512)</h2>
+  <div class="grid">
+    <div class="panel"><div class="home"><img src="${dataURL(mark({size:180, forme:'full', glow:true, bleed:true}))}" alt=""><span>Henri Touchard</span></div>
+      <div class="cap">iOS arrondit lui-même : carré plein bord</div></div>
+    <div class="panel dark"><div class="mask"><img src="${dataURL(mark({size:512, forme:'full', glow:true, bleed:true, scale:.78}))}" alt=""><div class="safe"></div></div>
+      <div class="cap">maskable : dessin réduit à 78 % dans la zone sûre</div></div>
+  </div>`;
+  document.querySelectorAll('.tabs').forEach(t => t.querySelector('.tab.on').prepend(raster(s16, 32)));
+  document.getElementById('z16').prepend(raster(s16, 16));
+  document.getElementById('z32').prepend(raster(s32, 32));
+  const sz = document.getElementById('sizes');
+  [16,32,48,64].forEach(px => { const f = document.createElement('figure'); f.append(raster(mark({size:px, ...v.at(px)}), px*2)); f.lastChild.style.width = f.lastChild.style.height = px+'px'; f.append(px+' px'); sz.append(f); });
+}
+const tabRow = () => `<div class="tab"><i class="ghost" style="background:#4285F4"></i><span>Boîte de réception (3)</span></div>
+  <div class="tab on"><span>Automatisation des processus &amp; logiciel sur mesure – Henri Touchard</span></div>
+  <div class="tab"><i class="ghost" style="background:#0A66C2"></i><span>LinkedIn</span></div>`;
+
+/* =================== Open Graph : contenus =================== */
+const CONTENUS = {
+  accueil:{sur:'Freelance · Paris et à distance', titre:'Optimisation opérationnelle & outils sur mesure', res:'Votre équipe se concentre sur ce qui a de la valeur', url:'henritouchard.fr', fict:false},
+  pum:{sur:'Récit d\'expérience', titre:'Coordonner les célébrations de plusieurs paroisses dans un seul outil', res:'Calendrier, équipes et chants réunis au même endroit', url:'henritouchard.fr/realisations', fict:true},
+  lizee:{sur:'Récit d\'expérience', titre:'Automatiser les commandes de transport avec une dizaine de transporteurs', res:'Plus aucune expédition saisie à la main', url:'henritouchard.fr/realisations', fict:true},
+  samba:{sur:'Récit d\'expérience', titre:'Refondre la gestion des parcs informatiques des écoles du Val‑d\'Oise', res:'En production dans tout le Val‑d\'Oise', url:'henritouchard.fr/realisations', fict:false},
+  long:{sur:'Récit d\'expérience', titre:'Réduire le traitement des commandes en synchronisant l\'entrepôt, les transporteurs et les OMS en marque blanche', res:'Des commandes qui partent sans intervention, du panier au transporteur', url:'henritouchard.fr/realisations', fict:true},
+};
+// taille du titre selon sa longueur : 3 lignes au plus
+const fit = (t, big, mid, small) => t.length <= 55 ? big : t.length <= 80 ? mid : small;
+const lock = (size) => `<div class="lock">${mark({size, glow:true, title:'Henri Touchard'})}<div><b>Henri Touchard</b><span>Optimisation opérationnelle</span></div></div>`;
+// croisement géant pour la variante C : mêmes tracés que la tuile, sans la tuile
+const bigCross = () => `<svg width="700" height="700" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-width="3.2" stroke-linecap="round">
+  <path d="M10 42 C19 42 23 22 32 22 L45 22" stroke="#fff" stroke-opacity=".92"/><path d="M10 22 C19 22 23 42 32 42 L45 42" stroke="#fff" stroke-opacity=".92"/>
+  <path d="M10 32 L48 32" stroke="#F0503C"/></g><circle cx="54.5" cy="32" r="2.6" fill="#F0503C"/></svg>`;
+
+const OG = {
+  A:{nom:'Bande encre', note:'Toute la carte en encre nuit avec la lueur du haut de page. Le logo en tête, le titre en blanc, le filet corail et son point en pied. Reprend la bande du haut du site.',
+     html:c => `<div class="og A">${lock(84)}<div class="sur">${c.sur}</div><h3 style="font-size:${fit(c.titre,68,58,48)}px;line-height:1.08">${c.titre}</h3><div class="fil"></div><div class="url">${c.url}</div>${c.fict?'<div class="fict">exemple</div>':''}</div>`},
+  B:{nom:'Le trait traverse', note:'Fond clair. Le titre en encre domine ; en pied, la tuile lance son trait corail sur toute la largeur jusqu\'au point. Une fine bande encre en haut rappelle la barre de navigation.',
+     html:c => `<div class="og B"><div class="topline"></div><div class="sur">${c.sur}</div><h3 style="font-size:${fit(c.titre,74,62,52)}px;line-height:1.06">${c.titre}</h3>
+       <div class="foot">${mark({size:84, glow:true, title:'Henri Touchard'})}<div class="fil"></div><div class="who">Henri Touchard<small>${c.url}</small></div></div>${c.fict?'<div class="fict">exemple</div>':''}</div>`},
+  C:{nom:'Partage', note:'Deux zones : à gauche le texte sur fond clair, à droite le croisement du logo en très grand, coupé par le bord, sur encre. L\'image se reconnaît même réduite à un timbre.',
+     html:c => `<div class="og C"><div class="txt"><div class="sur">${c.sur}</div><h3 style="font-size:${fit(c.titre,60,52,42)}px;line-height:1.08">${c.titre}</h3>
+       <div class="who"><b>Henri Touchard</b><span>${c.url}</span></div></div><div class="art">${bigCross()}</div>${c.fict?'<div class="fict">exemple</div>':''}</div>`},
+  D:{nom:'Résultat d\'abord', note:'Le résultat du récit (tiré de son résumé) en grand sur l\'encre, le titre en second sur fond clair. Plus vendeur, mais demande un résultat court et vrai pour chaque récit (pas de chiffre inventé).',
+     html:c => `<div class="og D"><div class="top"><div class="sur">${c.sur}</div><div class="res">${c.res}</div><div class="fil"></div></div>
+       <div class="bot"><h3>${c.titre}</h3>${lock(64)}</div>${c.fict?'<div class="fict">exemple</div>':''}</div>`},
+};
+
+function scaled(html, w, h){ // h facultatif : recadrage (carré centré)
+  const s = (h ? h/630 : w/1200), H = h || Math.round(630*s);
+  const offX = h ? -(1200*s - w)/2 : 0;
+  return `<div class="scaler" style="width:${w}px;height:${H}px"><div class="og-holder" style="position:absolute;left:${offX}px;top:0;width:${1200*s}px;height:${630*s}px">${html.replace('class="og ', `style="transform:scale(${s});transform-origin:0 0" class="og `)}</div></div>`;
+}
+
+function ogView(key, ck){
+  const v = OG[key], c = CONTENUS[ck], h = v.html(c), el = document.getElementById('app');
+  const big = Math.min(1200, document.getElementById('app').clientWidth || 900);
+  el.innerHTML = `
+  <h1 class="ph">Image Open Graph — ${key} · ${v.nom}</h1>
+  <p class="lead">${v.note}${c.fict ? ' <em>Le résultat et parfois le titre sont des exemples, pas des faits : les chiffres des récits restent à recueillir.</em>' : ''}</p>
+  <h2 class="sec">1200 × 630 (${c.titre.length} caractères dans le titre)</h2>
+  ${scaled(h, Math.min(big, 1200))}
+  <h2 class="sec">En situation</h2>
+  <div class="grid">
+    <div><div class="li" style="width:555px;max-width:100%"><div class="post"><i></i><div><b>Henri Touchard</b><small>Optimisation opérationnelle · 2 j</small></div></div>
+      ${scaled(h, 555)}<div class="meta"><b>${c.titre} – Henri Touchard</b><small>henritouchard.fr</small></div></div><div class="cap" style="font:12px var(--f-m);color:#6B7280;margin-top:6px">Fil LinkedIn, ordinateur (555 px)</div></div>
+    <div><div class="li" style="width:340px"><div class="post"><i></i><div><b>Henri Touchard</b><small>2 j</small></div></div>
+      ${scaled(h, 340)}<div class="meta"><b>${c.titre}</b><small>henritouchard.fr</small></div></div><div class="cap" style="font:12px var(--f-m);color:#6B7280;margin-top:6px">Fil LinkedIn, mobile (340 px)</div></div>
+    <div><div class="wa"><div class="card">${scaled(h, 86, 86)}<div class="tx"><b>${c.titre}</b><small>henritouchard.fr</small></div></div><p>https://${c.url}/…</p></div>
+      <div class="cap" style="font:12px var(--f-m);color:#6B7280;margin-top:6px">Messagerie, vignette carrée recadrée au centre</div></div>
+  </div>`;
+}
+
+/* =================== barre du prototype =================== */
+const q = new URLSearchParams(location.search);
+let vue = q.get('vue') === 'og' ? 'og' : (q.get('vue') === 'favicon' ? 'favicon' : 'og');
+let vf = FAV[q.get('variant')] ? q.get('variant') : 'F1', vo = OG[q.get('variant')] ? q.get('variant') : 'A';
+let ck = CONTENUS[q.get('contenu')] ? q.get('contenu') : 'pum';
+function render(){
+  const p = new URLSearchParams({vue, variant: vue==='og'?vo:vf}); if (vue==='og') p.set('contenu', ck);
+  history.replaceState(null, '', '?' + p);
+  if (vue === 'og') ogView(vo, ck); else favView(vf);
+  const keys = vue==='og' ? Object.keys(OG) : Object.keys(FAV), cur = vue==='og'?vo:vf, nom = (vue==='og'?OG:FAV)[cur].nom;
+  document.getElementById('proto').innerHTML = `
+    <button data-vue="favicon" class="${vue==='favicon'?'on':''}">Favicon</button><button data-vue="og" class="${vue==='og'?'on':''}">Open Graph</button>
+    <button data-step="-1" aria-label="Variante précédente">←</button><span class="lbl">${cur} (${nom})</span><button data-step="1" aria-label="Variante suivante">→</button>
+    ${vue==='og' ? `<select aria-label="Contenu">${Object.keys(CONTENUS).map(k=>`<option value="${k}" ${k===ck?'selected':''}>${{accueil:'Accueil',pum:'Récit PUM',lizee:'Récit Lizee',samba:'Récit SambaÉdu',long:'Titre très long'}[k]}</option>`).join('')}</select>` : ''}`;
+}
+function step(d){
+  const keys = vue==='og' ? Object.keys(OG) : Object.keys(FAV), cur = vue==='og'?vo:vf;
+  const n = keys[(keys.indexOf(cur) + d + keys.length) % keys.length];
+  if (vue==='og') vo = n; else vf = n; render();
+}
+document.getElementById('proto').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.vue) { vue = b.dataset.vue; render(); } else if (b.dataset.step) step(+b.dataset.step);
+});
+document.getElementById('proto').addEventListener('change', e => { ck = e.target.value; render(); });
+addEventListener('keydown', e => { if (e.target.closest('input,textarea,select,[contenteditable]')) return;
+  if (e.key==='ArrowLeft') step(-1); if (e.key==='ArrowRight') step(1); });
+addEventListener('resize', () => { if (vue==='og') render(); });
+document.fonts.ready.then(render); render();
+</script>
+</body>
+</html>
