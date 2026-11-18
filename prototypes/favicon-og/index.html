@@ -102,6 +102,19 @@ svg{display:block}
 .og .ccomp{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;align-items:flex-start;gap:9px;font:400 21px/1.2 var(--f-b);text-align:left}
 .og .ccomp li{display:flex;align-items:center;gap:12px}
 .og .ccomp i{width:7px;height:7px;border-radius:50%;background:var(--coral);flex:none}
+.og .ccomp i.b,.og .ccomp li.sep{display:none}
+/* P1 : un point de chaque côté */
+.og.p1 .ccomp,.og.p2 .ccomp,.og.p3 .ccomp{align-items:center}
+.og.p1 .ccomp i.b{display:block}
+/* P2 : le trait mène au point, comme le logo */
+.og.p2 .ccomp i.a{width:22px;height:2.5px;border-radius:2px}
+.og.p2 .ccomp i.b{display:block}
+/* P3 : le trait du logo, en miniature, sépare les lignes */
+.og.p3 .ccomp{gap:8px}
+.og.p3 .ccomp i.a{display:none}
+.og.p3 .ccomp li.sep{display:flex;gap:5px;height:6px}
+.og.p3 .ccomp li.sep b{width:22px;height:2.5px;border-radius:2px;background:var(--coral)}
+.og.p3 .ccomp li.sep i{width:5px;height:5px}
 .og.C .ccomp{color:var(--gris)}.og.Cc .ccomp{color:#3A4352}
 .og .sub{font:500 30px/1.1 var(--f-d);letter-spacing:-.01em;margin-top:12px}
 .og .comp{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;font:400 21px/1.2 var(--f-b);margin-top:22px;max-width:560px;white-space:nowrap}
@@ -233,7 +246,7 @@ const tabRow = () => `<div class="tab"><i class="ghost" style="background:#4285F
 const SITE = {intitule:'Optimisation<br>opérationnelle', sub:'&amp; outils sur mesure',
   comp:['Automatisation des processus','Logiciel sur mesure','Intégration de l\'IA'], url:'henritouchard.fr'};
 const sideComp = (items, cls) => `<ul class="scomp ${cls}">${items.map(c=>`<li><i></i>${c}</li>`).join('')}</ul>`;
-const fullText = () => `<h3>${SITE.intitule}</h3><div class="sub">${SITE.sub}</div><ul class="ccomp">${SITE.comp.map(c=>`<li><i></i>${c}</li>`).join('')}</ul>
+const fullText = () => `<h3>${SITE.intitule}</h3><div class="sub">${SITE.sub}</div><ul class="ccomp">${SITE.comp.map(c=>`<li><i class="a"></i><span>${c}</span><i class="b"></i></li>`).join('<li class="sep"><b></b><i></i></li>')}</ul>
 <div class="who">Henri Touchard · ${SITE.url}</div>`;
 // la page partagée ne change que le titre affiché sous l'image (og:title), pas l'image
 const PAGES = {
@@ -266,6 +279,14 @@ const OG = {
   D:{nom:'Tuile au centre', note:'Encre nuit, la tuile en grand au centre ; ses deux branches et son trait se prolongent en filets fins jusqu\'aux bords, le point se pose à droite.',
      html:() => `<div class="og D glow"><div class="rails">${rails()}</div><div class="stack">${mark({size:200, glow:true, title:'Henri Touchard'}).replace('<rect','<rect stroke="#37455C" stroke-width=".6"')}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div></div>`},
 };
+{ const P = {
+    C1:['p1','Triptyque · points des deux côtés','Chaque compétence centrée entre deux points corail : la liste devient symétrique.'],
+    C2:['p2','Triptyque · le trait mène au point','Chaque compétence entre un petit trait et un point corail, comme le logo : le trait guide jusqu\'au point.'],
+    C3:['p3','Triptyque · le trait sépare','Compétences centrées sans puce ; entre elles, le trait du logo en miniature, avec son point.'] };
+  const e = Object.entries(OG); for (const k in OG) delete OG[k];
+  for (const [k,v] of e) { OG[k]=v; if (k==='C') for (const [n,[cls,nom,note]] of Object.entries(P))
+    OG[n] = {nom, note, html:() => v.html().replace('class="og C glow"', `class="og C glow ${cls}"`)}; } }
+
 
 function scaled(html, w, h, safe){ // h facultatif : recadrage carré centré ; safe : montrer le carré central
   const s = h ? h/630 : w/1200, H = h || Math.round(630*s), offX = h ? -(1200*s - w)/2 : 0;
