@@ -299,6 +299,12 @@ button{font:inherit;cursor:pointer}
 .pE .sec.s3{--bg:#FAFAF8;--surface:#fff;--ink:#101418;--ink-2:#3B424B;--muted:#5C6570;--line:#E1E3E6;--line-strong:#C3C8CE;
   --accent-ink:#C7362A;--cta-bg:#101418;--cta-fg:#fff;--filet:#101418;background:transparent;color:var(--ink)}
 
+/* E : petit texte jamais en corail sur l'encre (lisibilité, daltonisme) ; le corail reste au filet, au point, aux boutons */
+.pE .surt{color:var(--ink-2)}
+/* dégradé léger sur les bandes encre (?grad=1) */
+body.grad.pD .hero,body.grad.pD .final{background:radial-gradient(ellipse 80% 110% at 100% 0%,#1F2731 0%,#101418 65%)}
+body.grad.pD .nav{background:#101418}
+
 /* =====================================================================
    PLANCHE — logo, filets, contrastes, typographies, impression
    ===================================================================== */
@@ -383,6 +389,7 @@ table.ct tr.unused{opacity:.45}
   <button type="button" data-page="planche">Planche</button>
   <span class="sep"></span>
   <button type="button" id="ink" title="Nuance de l'encre">encre</button>
+  <button type="button" id="grad" title="Dégradé léger sur les bandes encre">uni</button>
 </div>
 
 <script>
@@ -617,22 +624,25 @@ function state(){ const p=new URLSearchParams(location.search); return {v: keys.
 function go(v, page){ const p=new URLSearchParams(location.search); p.set('variant',v); p.set('page',page); history.replaceState(null,'','?'+p); render(); }
 // nuances de l'encre : [encre, surface sombre, filet sombre, filet sombre appuyé]
 const INKS = {
-  neutre: ['#101418','#1A2027','#2A313A','#3D4550'],
-  nuit:   ['#0E1626','#172235','#263248','#37455C'],
-  petrole:['#0C1B1F','#15282D','#223A40','#324E55'],
-  prune:  ['#1A1220','#241B2B','#352A3D','#483B52'],
-  brun:   ['#1A1512','#241E1A','#362D27','#4A3F37'],
+  neutre: ['#101418','#1A2027','#2A313A','#3D4550','#1F2731'],
+  nuit:   ['#0E1626','#172235','#263248','#37455C','#1C2840'],
+  petrole:['#0C1B1F','#15282D','#223A40','#324E55','#1A3036'],
+  prune:  ['#1A1220','#241B2B','#352A3D','#483B52','#2A1F33'],
+  brun:   ['#1A1512','#241E1A','#362D27','#4A3F37','#2B231E'],
 };
 const inkKeys = Object.keys(INKS);
 const styleEl = document.querySelector('style'); const baseCSS = styleEl.textContent;
 const tint = (txt, k) => INKS.neutre.reduce((t,h,i)=>t.split(h).join(INKS[k][i]), txt);
 function inkKey(){ const k=new URLSearchParams(location.search).get('ink'); return INKS[k]?k:'neutre'; }
-document.addEventListener('click', e => { if (e.target.id==='ink'){ const p=new URLSearchParams(location.search); p.set('ink', inkKeys[(inkKeys.indexOf(inkKey())+1)%inkKeys.length]); history.replaceState(null,'','?'+p); render(); } });
+document.addEventListener('click', e => { if (e.target.id==='grad'){ const p=new URLSearchParams(location.search); p.get('grad')==='1'?p.delete('grad'):p.set('grad','1'); history.replaceState(null,'','?'+p); render(); return; }
+  if (e.target.id==='ink'){ const p=new URLSearchParams(location.search); p.set('ink', inkKeys[(inkKeys.indexOf(inkKey())+1)%inkKeys.length]); history.replaceState(null,'','?'+p); render(); } });
 function render(){
   const k = inkKey(); styleEl.textContent = tint(baseCSS, k); HEX.encre = INKS[k][0];
   document.getElementById('ink').textContent = 'encre : ' + k + ' ' + INKS[k][0];
   const s = state();
-  document.body.className = 'vC vD vE ' + V[s.v].cls;
+  const g = new URLSearchParams(location.search).get('grad')==='1';
+  document.body.className = 'vC vD vE ' + V[s.v].cls + (g?' grad':'');
+  document.getElementById('grad').textContent = g ? 'fond : dégradé' : 'fond : uni';
   document.getElementById('app').innerHTML = tint(PAGES[s.page](s.v), k);
   document.getElementById('lbl').textContent = `${s.v} · ${V[s.v].name} — ${s.page}`;
   document.querySelectorAll('#proto [data-page]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.page===s.page));
