@@ -381,6 +381,8 @@ table.ct tr.unused{opacity:.45}
   <button type="button" data-page="accueil">Accueil</button>
   <button type="button" data-page="recit">Récit</button>
   <button type="button" data-page="planche">Planche</button>
+  <span class="sep"></span>
+  <button type="button" id="ink" title="Nuance de l'encre">encre</button>
 </div>
 
 <script>
@@ -520,7 +522,7 @@ const recit = () => { const R=C.recit; return `${navBar('recit')}<main>
   </div></main>${footer()}`; };
 
 // ---------- planche : logo, filets, contrastes, typo, impression ----------
-const HEX = {fond:'#FAFAF8', blanc:'#FFFFFF', encre:'#101418', 'texte 2':'#3B424B', discret:'#5C6570', corail:'#F0503C', 'corail foncé':'#C7362A', pétrole:'#1E5E66'};
+let HEX = {fond:'#FAFAF8', blanc:'#FFFFFF', encre:'#101418', 'texte 2':'#3B424B', discret:'#5C6570', corail:'#F0503C', 'corail foncé':'#C7362A', pétrole:'#1E5E66'};
 function lum(h){ const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)); return .2126*c[0]+.7152*c[1]+.0722*c[2]; }
 const ratio = (a,b) => { const [x,y]=[lum(a),lum(b)].sort((m,n)=>n-m); return (x+.05)/(y+.05); };
 // [texte, fond, usage, variantes qui l'emploient]
@@ -613,10 +615,25 @@ const PAGES = {accueil, recit, planche};
 const keys = Object.keys(V);
 function state(){ const p=new URLSearchParams(location.search); return {v: keys.includes(p.get('variant'))?p.get('variant'):'A', page: PAGES[p.get('page')]?p.get('page'):'accueil'}; }
 function go(v, page){ const p=new URLSearchParams(location.search); p.set('variant',v); p.set('page',page); history.replaceState(null,'','?'+p); render(); }
+// nuances de l'encre : [encre, surface sombre, filet sombre, filet sombre appuyé]
+const INKS = {
+  neutre: ['#101418','#1A2027','#2A313A','#3D4550'],
+  nuit:   ['#0E1626','#172235','#263248','#37455C'],
+  petrole:['#0C1B1F','#15282D','#223A40','#324E55'],
+  prune:  ['#1A1220','#241B2B','#352A3D','#483B52'],
+  brun:   ['#1A1512','#241E1A','#362D27','#4A3F37'],
+};
+const inkKeys = Object.keys(INKS);
+const styleEl = document.querySelector('style'); const baseCSS = styleEl.textContent;
+const tint = (txt, k) => INKS.neutre.reduce((t,h,i)=>t.split(h).join(INKS[k][i]), txt);
+function inkKey(){ const k=new URLSearchParams(location.search).get('ink'); return INKS[k]?k:'neutre'; }
+document.addEventListener('click', e => { if (e.target.id==='ink'){ const p=new URLSearchParams(location.search); p.set('ink', inkKeys[(inkKeys.indexOf(inkKey())+1)%inkKeys.length]); history.replaceState(null,'','?'+p); render(); } });
 function render(){
+  const k = inkKey(); styleEl.textContent = tint(baseCSS, k); HEX.encre = INKS[k][0];
+  document.getElementById('ink').textContent = 'encre : ' + k + ' ' + INKS[k][0];
   const s = state();
   document.body.className = 'vC vD vE ' + V[s.v].cls;
-  document.getElementById('app').innerHTML = PAGES[s.page](s.v);
+  document.getElementById('app').innerHTML = tint(PAGES[s.page](s.v), k);
   document.getElementById('lbl').textContent = `${s.v} · ${V[s.v].name} — ${s.page}`;
   document.querySelectorAll('#proto [data-page]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.page===s.page));
 }
