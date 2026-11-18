@@ -301,6 +301,7 @@ button{font:inherit;cursor:pointer}
 
 /* E : petit texte jamais en corail sur l'encre (lisibilité, daltonisme) ; le corail reste au filet, au point, aux boutons */
 .pE .surt{color:var(--ink-2)}
+.pE .hero .surt{font-size:15px;letter-spacing:.01em}
 /* dégradé léger sur les bandes encre (?grad=1) */
 body.grad.pD .hero,body.grad.pD .final{background:radial-gradient(ellipse 80% 110% at 100% 0%,#1F2731 0%,#101418 65%)}
 body.grad.pD .nav{background:#101418}
@@ -485,9 +486,9 @@ const accueil = () => `${navBar('accueil')}<main>
         <div class="btns"><a class="cta" href="#" data-brief>Décrivez votre besoin</a><a class="more" href="?page=recit" data-go="recit">voir des réalisations →</a></div></aside>
     </div>
     <ol class="chain">
-      <li><span class="dot">1</span><span><b>Je repère</b> les points de friction</span></li>
-      <li><span class="dot">2</span><span><b>Je construis</b> l'outil sur mesure qui les supprime</span></li>
-      <li><span class="dot">3</span><span><b>Je le maintiens</b> dans la durée</span></li>
+      <li><span class="dot">1</span><span><b>Repérage et analyse</b> des points de friction</span></li>
+      <li><span class="dot">2</span><span><b>Construction</b> d'outils sur mesure</span></li>
+      <li><span class="dot">3</span><span><b>Maintien</b> dans la durée</span></li>
     </ol>
   </div></section>
   <section class="sec s1"><div class="wrap sec-head">
