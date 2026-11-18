@@ -58,58 +58,47 @@ svg{display:block}
 .sizes{display:flex;align-items:flex-end;gap:18px}
 .sizes figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;font:11px var(--f-m);color:#6B7280}
 
-/* ---------- Open Graph : une seule image pour tout le site, 1200 × 630, mise à l'échelle par transform ---------- */
+/* ---------- Open Graph : une seule image pour tout le site, 1200 × 630 ----------
+   Tout ce qui compte tient dans le carré central (285 → 915 px) : c'est ce que gardent les messageries. */
 .scaler{position:relative;overflow:hidden;border-radius:4px}
 .og{width:1200px;height:630px;position:relative;overflow:hidden;font-family:var(--f-b)}
-.og .lock{display:flex;align-items:center;gap:22px}
-.og .lock b{display:block;font:600 40px/1.05 var(--f-d);letter-spacing:-.01em;white-space:nowrap}
-.og h3{margin:0;font-family:var(--f-d);font-weight:600;letter-spacing:-.02em}
-.og .url{font:400 22px/1 var(--f-m)}
-.og .comp{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;font:400 25px/1.2 var(--f-b)}
-.og .comp i{width:9px;height:9px;border-radius:50%;background:var(--coral);flex:none}
+.og .stack{position:absolute;left:285px;width:630px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.og h3{margin:0;font:600 84px/1 var(--f-d);letter-spacing:-.025em}
+.og .name{font:600 34px/1 var(--f-d);letter-spacing:-.01em;white-space:nowrap}
 .og .fil{position:relative;height:6px;border-radius:3px;background:var(--coral)}
 .og .fil::after{content:"";position:absolute;right:-30px;top:-6px;width:18px;height:18px;border-radius:50%;background:var(--coral)}
 .glow{background:radial-gradient(ellipse 80% 110% at 100% 0%,#1C2840 0%,#0E1626 65%)}
+.safe-sq{position:absolute;top:0;bottom:0;border-left:2px dashed #FFE58A;border-right:2px dashed #FFE58A;pointer-events:none}
+.safe-sq span{position:absolute;left:6px;top:6px;font:500 12px/1 var(--f-m);background:#FFE58A;color:#3A2E00;padding:4px 6px;border-radius:3px}
 
-/* A — Bande encre */
-.og.A{color:#fff;padding:64px 80px}
-.og.A h3{font-size:66px;line-height:1.06;margin-top:74px;max-width:940px}
-.og.A .comp{color:var(--gris);margin-top:34px}
-.og.A .fil{position:absolute;left:80px;bottom:76px;width:300px}
-.og.A .url{position:absolute;right:80px;bottom:68px;color:var(--muted)}
+/* A — Bande encre : tout centré sur l'encre */
+.og.A{color:#fff}
+.og.A .stack svg{margin-bottom:34px}
+.og.A .name{color:var(--gris);margin-top:30px}
+.og.A .fil{width:200px;margin:36px 30px 0 0}
 
-/* B — Le trait traverse */
-.og.B{background:var(--paper);color:var(--nuit);padding:76px 80px}
+/* B — Le trait traverse : fond clair, le trait corail file d'un bord à l'autre sous le texte */
+.og.B{background:var(--paper);color:var(--nuit)}
 .og.B .topline{position:absolute;left:0;top:0;right:0;height:14px;background:var(--nuit)}
-.og.B .name{font:500 24px/1 var(--f-m);letter-spacing:.06em;text-transform:uppercase;color:var(--coral-d)}
-.og.B h3{font-size:78px;line-height:1.02;margin-top:26px;max-width:1000px}
-.og.B .comp{color:#3A4352;margin-top:30px}
-.og.B .foot{position:absolute;left:80px;right:80px;bottom:60px;display:flex;align-items:center}
-.og.B .foot .fil{flex:1;margin:0 64px 0 26px}
-.og.B .foot .url{color:#5A616B}
+.og.B .stack{justify-content:flex-start;padding-top:70px}
+.og.B .stack svg{margin-bottom:30px}
+.og.B .name{color:var(--coral-d);font:500 26px/1 var(--f-m);letter-spacing:.06em;text-transform:uppercase;margin-top:26px}
+.og.B .fil{position:absolute;left:0;right:80px;bottom:92px}
 
-/* C — Partage */
-.og.C{background:var(--paper);color:var(--nuit);display:grid;grid-template-columns:720px 480px}
-.og.C .txt{padding:66px 56px 62px 80px;display:flex;flex-direction:column}
-.og.C .txt>b{font:600 30px/1 var(--f-d)}
-.og.C h3{font-size:60px;line-height:1.06;margin-top:26px}
-.og.C ul{list-style:none;margin:34px 0 0;padding:0;display:flex;flex-direction:column;gap:12px;font:400 25px/1.2 var(--f-b);color:#3A4352}
-.og.C li{display:flex;align-items:center;gap:14px}
-.og.C li i{width:9px;height:9px;border-radius:50%;background:var(--coral)}
-.og.C .url{margin-top:auto;color:#5A616B}
-.og.C .art{position:relative;overflow:hidden}
-.og.C .art svg{position:absolute;left:-190px;top:50%;transform:translateY(-50%)}
+/* C — Triptyque : les branches du logo entrent par la gauche, le trait sort à droite jusqu'au point */
+.og.C{background:var(--paper);color:var(--nuit)}
+.og.C .side{position:absolute;top:0;bottom:0;width:285px;overflow:hidden}
+.og.C .side.l{left:0}.og.C .side.r{right:0}
+.og.C .side svg{position:absolute;top:50%;transform:translateY(-50%)}
+.og.C .name{margin-top:28px;color:#3A4352}
+.og.C .stack svg{margin-bottom:30px}
 
-/* D — Chaîne */
-.og.D{color:#fff;padding:60px 80px}
-.og.D h3{font-size:52px;line-height:1.08;margin-top:52px;max-width:1000px}
-.og.D .chain{position:absolute;left:80px;right:80px;bottom:110px;display:grid;grid-template-columns:repeat(3,1fr)}
-.og.D .chain div{position:relative;padding-top:34px;font:500 26px/1.2 var(--f-b);color:#fff}
-.og.D .chain div::before{content:"";position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;border:3px solid var(--coral);background:var(--nuit);z-index:1;box-sizing:border-box}
-.og.D .chain div::after{content:"";position:absolute;left:9px;right:-9px;top:7px;height:4px;background:var(--coral)}
-.og.D .chain div:last-child::before{background:var(--coral)}
-.og.D .chain div:last-child::after{display:none}
-.og.D .url{position:absolute;left:80px;bottom:54px;color:var(--muted)}
+/* D — Tuile au centre : la tuile en grand, ses traits prolongés jusqu'aux bords */
+.og.D{color:#fff}
+.og.D .rails{position:absolute;inset:0}
+.og.D .stack{justify-content:flex-start;padding-top:74px}
+.og.D h3{margin-top:40px;font-size:72px}
+.og.D .name{color:var(--gris);margin-top:22px;font-size:30px}
 /* ---------- maquettes de partage ---------- */
 .li{background:#fff;border-radius:8px;box-shadow:0 0 0 1px rgba(0,0,0,.08);overflow:hidden;font-family:-apple-system,system-ui,sans-serif}
 .li .post{padding:12px 16px 10px;font-size:14px;color:#191919;display:flex;gap:10px;align-items:center}
@@ -219,8 +208,7 @@ const tabRow = () => `<div class="tab"><i class="ghost" style="background:#4285F
   <div class="tab"><i class="ghost" style="background:#0A66C2"></i><span>LinkedIn</span></div>`;
 
 /* =================== Open Graph : une seule image pour tout le site =================== */
-const SITE = {intitule:'Optimisation opérationnelle & outils sur mesure',
-  comp:['Automatisation des processus','Logiciel sur mesure','Intégration de l\'IA'], url:'henritouchard.fr'};
+const SITE = {intitule:'Optimisation<br>opérationnelle'};
 // la page partagée ne change que le titre affiché sous l'image (og:title), pas l'image
 const PAGES = {
   accueil:{nom:'Accueil', titre:'Automatisation des processus & logiciel sur mesure – Henri Touchard'},
@@ -228,28 +216,33 @@ const PAGES = {
   lizee:{nom:'Récit Lizee', titre:'Automatiser les commandes de transport avec une dizaine de transporteurs – Henri Touchard'},
   apropos:{nom:'À propos', titre:'À propos – Henri Touchard'},
 };
-const lock = (size) => `<div class="lock">${mark({size, glow:true, title:'Henri Touchard'})}<b>Henri Touchard</b></div>`;
-const comp = () => `<div class="comp">${SITE.comp.map((c,i)=>(i?'<i></i>':'')+`<span>${c}</span>`).join('')}</div>`;
-const bigCross = () => `<svg width="700" height="700" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke-width="3.2" stroke-linecap="round">
-  <path d="M10 42 C19 42 23 22 32 22 L45 22" stroke="#fff" stroke-opacity=".92"/><path d="M10 22 C19 22 23 42 32 42 L45 42" stroke="#fff" stroke-opacity=".92"/>
-  <path d="M10 32 L48 32" stroke="#F0503C"/></g><circle cx="54.5" cy="32" r="2.6" fill="#F0503C"/></svg>`;
+// moitiés du logo pour le triptyque : branches à gauche, trait et point à droite
+const branchesL = () => `<svg width="285" height="420" viewBox="0 0 285 420" aria-hidden="true"><g fill="none" stroke-width="16" stroke-linecap="round">
+  <path d="M-40 330 C90 330 150 90 285 90" stroke="#0E1626"/><path d="M-40 90 C90 90 150 330 285 330" stroke="#0E1626"/><path d="M-40 210 L285 210" stroke="#F0503C"/></g></svg>`;
+const traitR = () => `<svg width="285" height="420" viewBox="0 0 285 420" aria-hidden="true"><g fill="none" stroke-width="16" stroke-linecap="round">
+  <path d="M0 90 L120 90" stroke="#0E1626"/><path d="M0 330 L120 330" stroke="#0E1626"/><path d="M0 210 L170 210" stroke="#F0503C"/></g><circle cx="215" cy="210" r="13" fill="#F0503C"/></svg>`;
+// rails de D : les deux branches et le trait de la tuile prolongés jusqu'aux bords
+const rails = () => `<svg width="1200" height="630" viewBox="0 0 1200 630" aria-hidden="true"><g fill="none" stroke-width="3" stroke-linecap="round">
+  <path d="M0 143 L490 143" stroke="#37455C"/><path d="M710 143 L1200 143" stroke="#37455C"/>
+  <path d="M0 205 L490 205" stroke="#37455C"/><path d="M710 205 L1200 205" stroke="#37455C"/>
+  <path d="M0 174 L490 174" stroke="#F0503C" stroke-opacity=".55"/><path d="M710 174 L1080 174" stroke="#F0503C" stroke-opacity=".55"/></g>
+  <circle cx="1100" cy="174" r="7" fill="#F0503C"/></svg>`;
 
 const OG = {
-  A:{nom:'Bande encre', note:'Toute l\'image en encre nuit avec la lueur du haut de page. Le logo et le nom en tête, l\'intitulé en grand, les compétences en dessous, le filet et l\'adresse en pied. La plus proche du haut de page du site.',
-     html:() => `<div class="og A glow">${lock(96)}<h3>${SITE.intitule}</h3>${comp()}<div class="fil"></div><div class="url">${SITE.url}</div></div>`},
-  B:{nom:'Le trait traverse', note:'Fond clair, l\'intitulé en très grand. En pied, la tuile lance son trait corail sur toute la largeur jusqu\'au point. Une fine bande encre en haut rappelle la barre de navigation.',
-     html:() => `<div class="og B"><div class="topline"></div><div class="name">Henri Touchard</div><h3>${SITE.intitule}</h3>${comp()}
-       <div class="foot">${mark({size:84, glow:true, title:'Henri Touchard'})}<div class="fil"></div><div class="url">${SITE.url}</div></div></div>`},
-  C:{nom:'Partage', note:'Deux zones : à gauche le texte sur fond clair, les compétences en liste ; à droite le croisement du logo en très grand, coupé par le bord, sur encre. Se reconnaît même réduite à un timbre.',
-     html:() => `<div class="og C"><div class="txt"><b>Henri Touchard</b><h3>${SITE.intitule}</h3>
-       <ul>${SITE.comp.map(c=>`<li><i></i>${c}</li>`).join('')}</ul><div class="url">${SITE.url}</div></div><div class="art glow">${bigCross()}</div></div>`},
-  D:{nom:'Chaîne', note:'Encre nuit. Les trois compétences forment une chaîne reliée par le trait corail, comme la chaîne « repérage → construction → maintien » du haut de page ; le dernier maillon est plein.',
-     html:() => `<div class="og D glow">${lock(80)}<h3>${SITE.intitule}</h3><div class="chain">${SITE.comp.map(c=>`<div>${c}</div>`).join('')}</div><div class="url">${SITE.url}</div></div>`},
+  A:{nom:'Bande encre', note:'Toute l\'image en encre nuit avec la lueur du haut de page ; la tuile, l\'intitulé et le nom empilés au centre, le filet corail dessous.',
+     html:() => `<div class="og A glow"><div class="stack">${mark({size:120, glow:true, title:'Henri Touchard'})}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div><div class="fil"></div></div></div>`},
+  B:{nom:'Le trait traverse', note:'Fond clair, l\'intitulé en très grand au centre. Le trait corail file sous le texte d\'un bord à l\'autre jusqu\'au point. Une fine bande encre en haut rappelle la barre de navigation.',
+     html:() => `<div class="og B"><div class="topline"></div><div class="stack">${mark({size:96, glow:true, title:'Henri Touchard'})}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div><div class="fil"></div></div>`},
+  C:{nom:'Triptyque', note:'Fond clair. Le logo est ouvert en deux : ses branches entrent par la gauche, son trait sort à droite jusqu\'au point ; l\'intitulé et le nom au centre.',
+     html:() => `<div class="og C"><div class="side l">${branchesL()}</div><div class="stack">${mark({size:96, glow:true, title:'Henri Touchard'})}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div><div class="side r">${traitR()}</div></div>`},
+  D:{nom:'Tuile au centre', note:'Encre nuit, la tuile en grand au centre ; ses deux branches et son trait se prolongent en filets fins jusqu\'aux bords, le point se pose à droite.',
+     html:() => `<div class="og D glow"><div class="rails">${rails()}</div><div class="stack">${mark({size:200, glow:true, title:'Henri Touchard'}).replace('<rect','<rect stroke="#37455C" stroke-width=".6"')}<h3>${SITE.intitule}</h3><div class="name">Henri Touchard</div></div></div>`},
 };
 
-function scaled(html, w, h){ // h facultatif : recadrage carré centré
+function scaled(html, w, h, safe){ // h facultatif : recadrage carré centré ; safe : montrer le carré central
   const s = h ? h/630 : w/1200, H = h || Math.round(630*s), offX = h ? -(1200*s - w)/2 : 0;
-  return `<div class="scaler" style="width:${w}px;height:${H}px"><div style="position:absolute;left:${offX}px;top:0">${html.replace('<div class="og ', `<div style="transform:scale(${s});transform-origin:0 0" class="og `)}</div></div>`;
+  const sq = safe ? `<div class="safe-sq" style="left:${285*s}px;width:${630*s}px"><span>carré gardé par les messageries</span></div>` : '';
+  return `<div class="scaler" style="width:${w}px;height:${H}px"><div style="position:absolute;left:${offX}px;top:0">${html.replace('<div class="og ', `<div style="transform:scale(${s});transform-origin:0 0" class="og `)}</div>${sq}</div>`;
 }
 
 function ogView(key, pk){
@@ -259,8 +252,8 @@ function ogView(key, pk){
   el.innerHTML = `
   <h1 class="ph">Image Open Graph du site — ${key} · ${v.nom}</h1>
   <p class="lead">${v.note} <strong>Une seule image pour toutes les pages</strong> ; seul le titre affiché sous l'image change selon la page partagée (menu en bas : ${pg.nom}).</p>
-  <h2 class="sec">1200 × 630</h2>
-  ${scaled(h, big)}
+  <h2 class="sec">1200 × 630, carré central en pointillés</h2>
+  ${scaled(h, big, 0, true)}
   <h2 class="sec">En situation (lien vers : ${pg.nom})</h2>
   <div class="grid">
     <div><div class="li" style="width:555px;max-width:100%"><div class="post"><i></i><div><b>Henri Touchard</b><small>Optimisation opérationnelle · 2 j</small></div></div>
