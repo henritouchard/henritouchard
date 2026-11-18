@@ -143,7 +143,8 @@ def lockup(mark, size, fg, bg, ac, name_px, base_px, base_col, label=None):
 def cap(t, col=GREY):
     return f'<span style="font-family: \'IBM Plex Mono\', monospace; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: {col}">{t}</span>'
 
-def bench(title, mark, fav, tile=False):
+def bench(title, mark, fav, tile=False, lk=None):
+    lockup = lk or globals()['lockup']
     BW, BH = 880, 560
     body = f'''<div style="width: {BW}px; height: {BH}px; display: flex; flex-direction: column; background: #FFFFFF; color: {INK}; font-family: 'IBM Plex Sans', sans-serif">
 <div style="height: 250px; box-sizing: border-box; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px">
