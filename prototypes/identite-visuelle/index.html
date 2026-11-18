@@ -1,0 +1,690 @@
+<!doctype html>
+<!--
+  PROTOTYPE JETABLE — ticket « Quelle identité visuelle pour le site ? » (#15)
+  Trois identités radicalement différentes, chacune sur l'accueil et une page de récit (PUM).
+  ?variant=A|B|C  &  ?page=accueil|recit   — flèches ← → du clavier pour changer de variante.
+  Ouvrir : xdg-open prototypes/identite-visuelle/index.html
+  Les textes viennent des tickets résolus ; entre crochets = fait encore à recueillir.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Identité visuelle — prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img,svg{display:block}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.narrow{max-width:720px;margin:0 auto;padding:0 24px}
+button{font:inherit;cursor:pointer}
+.ph{color:var(--muted);font-style:italic}
+
+/* ---------- logo : tuile monogramme (piste 5), déclinée par variante ---------- */
+.tile{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;
+  background:var(--tile-bg);color:var(--tile-fg);font-family:var(--f-tile);font-weight:600;letter-spacing:-.04em;line-height:1}
+.tile i{position:absolute;background:var(--accent);border-radius:2px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand b{font-family:var(--f-display);font-weight:600;font-size:18px;letter-spacing:-.01em}
+
+/* ---------- barre de navigation fixe (commune, stylée par variante) ---------- */
+.nav{position:sticky;top:0;z-index:20;background:var(--nav-bg);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
+.nav nav{display:flex;align-items:center;gap:26px}
+.nav nav a.l{text-decoration:none;font-size:15px;color:var(--ink-2)}
+.nav nav a.l[aria-current]{color:var(--ink);text-decoration:underline;text-underline-offset:6px}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;text-decoration:none;font-weight:600;font-size:15px;border:0;
+  background:var(--cta-bg);color:var(--cta-fg);border-radius:var(--radius)}
+.cta.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-strong)}
+@media (max-width:760px){.nav nav a.l{display:none}.nav .cta{padding:0 14px;font-size:14px}}
+
+/* ---------- modale du brief (commune) ---------- */
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(10,12,16,.45);display:none;align-items:center;justify-content:center;padding:24px}
+.modal-bg.open{display:flex}
+.modal{width:100%;max-width:620px;background:var(--surface);color:var(--ink);border-radius:var(--radius-lg);padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:18px}
+.modal h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:28px;letter-spacing:-.01em}
+.steps{display:flex;gap:6px}.steps span{flex:1;height:4px;border-radius:2px;background:var(--line)}.steps span.on{background:var(--accent)}
+.modal label{font-size:14px;font-weight:600}
+.modal textarea{width:100%;min-height:160px;padding:14px;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);resize:vertical}
+.modal .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+.modal .note{font-size:13px;color:var(--muted);margin:0}
+@media (max-width:640px){.modal-bg{padding:0}.modal{max-width:none;height:100%;border-radius:0}}
+
+/* ---------- barre de bascule du prototype (hors design) ---------- */
+#proto{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:6px;padding:6px;
+  background:#111;color:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:500 13px/1 system-ui,sans-serif;white-space:nowrap}
+#proto button{background:#2a2a2a;color:#fff;border:0;border-radius:999px;height:34px;min-width:34px;padding:0 12px}
+#proto button[aria-pressed=true]{background:#fff;color:#111}
+#proto .lbl{padding:0 10px;min-width:210px;text-align:center}
+#proto .sep{width:1px;height:20px;background:#444;margin:0 4px}
+
+/* =====================================================================
+   VARIANTE A — « Continuité » : le canvas + la tuile retenue
+   ===================================================================== */
+.vA{--bg:#F6F6F3;--surface:#fff;--ink:#14161A;--ink-2:#3A3D45;--muted:#5B616E;--line:#E4E4DF;--line-strong:#CFD0CA;
+  --accent:#2457F5;--accent-ink:#1F45C2;--cta-bg:#2457F5;--cta-fg:#fff;--nav-bg:rgba(246,246,243,.88);
+  --tile-bg:#14161A;--tile-fg:#fff;--f-tile:'Space Grotesk',sans-serif;
+  --f-display:'Space Grotesk',sans-serif;--f-body:Inter,system-ui,sans-serif;--radius:10px;--radius-lg:16px;font-size:17px;line-height:1.6}
+.vA .hero{padding:96px 0 104px}
+.vA .eyebrow{margin:0 0 22px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.vA h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(38px,5.6vw,68px);line-height:1.05;letter-spacing:-.03em;max-width:980px}
+.vA .lede{margin:26px 0 0;font-size:20px;line-height:1.55;color:var(--ink-2);max-width:720px}
+.vA .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.vA section.band{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.vA .sec{padding:88px 0}
+.vA h2{margin:0 0 12px;font-family:var(--f-display);font-weight:700;font-size:clamp(28px,3.6vw,42px);line-height:1.1;letter-spacing:-.02em}
+.vA .sec-intro{margin:0 0 40px;color:var(--ink-2);max-width:680px;font-size:18px}
+.vA .grid5{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.vA .card{background:var(--bg);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.vA .card .n{font-family:var(--f-display);font-weight:600;font-size:14px;color:var(--accent-ink)}
+.vA .card h3{margin:0;font-family:var(--f-display);font-size:20px;line-height:1.2}
+.vA .card p{margin:0;font-size:15px;color:var(--ink-2)}
+.vA .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.vA .fr{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:170px}
+.vA .fr p{margin:0;font-family:var(--f-display);font-size:21px;line-height:1.3;font-weight:500}
+.vA .fr a{font-weight:600;font-size:15px;color:var(--accent-ink);text-decoration:none}
+.vA ol.steps4{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px}
+.vA ol.steps4 li{border-top:2px solid var(--ink);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+.vA ol.steps4 .n{font-family:var(--f-display);font-weight:600;color:var(--accent-ink)}
+.vA ol.steps4 h3{margin:0;font-family:var(--f-display);font-size:21px}
+.vA ol.steps4 p{margin:0;font-size:15px;color:var(--ink-2)}
+.vA .guar{margin-top:48px;display:flex;flex-wrap:wrap;gap:10px}
+.vA .guar span{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:500}
+.vA .final{background:var(--ink);color:#fff;padding:96px 0}
+.vA .final h2{color:#fff;max-width:760px}
+.vA .final p{color:#B9BDC6;max-width:620px;margin:0 0 30px;font-size:18px}
+.vA footer{padding:28px 0;font-size:14px;color:var(--muted)}
+.vA footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+/* récit A */
+.vA .crumb{font-size:14px;color:var(--muted);padding-top:48px}
+.vA .crumb a{text-decoration:none;color:var(--accent-ink)}
+.vA .r-title{margin:18px 0 0;font-family:var(--f-display);font-weight:700;font-size:clamp(34px,4.4vw,52px);line-height:1.08;letter-spacing:-.025em}
+.vA .r-chapo{margin:20px 0 0;font-size:21px;line-height:1.5;color:var(--ink-2)}
+.vA .r-meta{margin:22px 0 0;display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px;color:var(--muted)}
+.vA .r-sum{margin:40px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.vA .r-sum div{background:var(--surface);padding:20px}
+.vA .r-sum h4{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.vA .r-sum p{margin:0;font-size:15px;line-height:1.5}
+.vA .r-fiche{margin:20px 0 0;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px}
+.vA .r-fiche b{color:var(--ink-2);font-weight:600}
+.vA .r-body{margin-top:48px;font-size:19px;line-height:1.75}
+.vA .r-body h2{font-size:28px;margin:48px 0 12px}
+.vA .r-body p{margin:0 0 20px}
+.vA .fig{margin:32px 0;border-radius:14px;background:repeating-linear-gradient(45deg,#ECECE7 0 12px,#F2F2EE 12px 24px);height:300px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
+.vA .r-end{margin:56px 0 0;padding:32px;background:var(--ink);color:#fff;border-radius:16px;display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.vA .r-end h3{margin:0;font-family:var(--f-display);font-size:26px}
+.vA .r-next{margin:40px 0 96px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.vA .r-next a{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.vA .r-next small{color:var(--muted);font-size:13px}
+.vA .r-next b{display:block;margin-top:6px;font-family:var(--f-display);font-size:19px;line-height:1.3}
+
+/* =====================================================================
+   VARIANTE B — « Atelier » : éditorial, serif, papier, carnet d'artisan
+   ===================================================================== */
+.vB{--bg:#F3EEE4;--surface:#FBF8F2;--ink:#1E1B16;--ink-2:#47413A;--muted:#6B6359;--line:#D9D0C1;--line-strong:#B9AE9C;
+  --accent:#2F5D4A;--accent-ink:#2F5D4A;--cta-bg:#1E1B16;--cta-fg:#F3EEE4;--nav-bg:rgba(243,238,228,.92);
+  --tile-bg:#1E1B16;--tile-fg:#F3EEE4;--f-tile:Fraunces,serif;
+  --f-display:Fraunces,Georgia,serif;--f-body:'Source Serif 4',Georgia,serif;--f-ui:Inter,system-ui,sans-serif;--radius:3px;--radius-lg:6px;font-size:19px;line-height:1.65}
+.vB .nav .wrap{min-height:76px}
+.vB .nav nav a.l,.vB .cta{font-family:var(--f-ui)}
+.vB .nav nav a.l{font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+.vB .brand b{font-size:20px;font-weight:400}
+.vB .smallcaps{font-family:var(--f-ui);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.vB .rule{display:flex;align-items:center;gap:16px}.vB .rule::before,.vB .rule::after{content:"";flex:1;height:1px;background:var(--line-strong)}
+.vB .hero{padding:72px 0 88px;border-bottom:1px solid var(--line-strong)}
+.vB .hero-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:56px;align-items:end;margin-top:48px}
+.vB h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(42px,6.4vw,84px);line-height:1.02;letter-spacing:-.02em}
+.vB h1 em{color:var(--accent);font-style:italic}
+.vB .lede{margin:0 0 28px;font-size:19px;color:var(--ink-2)}
+.vB .hero aside{border-left:1px solid var(--line-strong);padding-left:28px}
+.vB .btns{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.vB .btns a.more{font-family:var(--f-ui);font-size:15px;text-underline-offset:5px}
+@media (max-width:860px){.vB .hero-grid{grid-template-columns:1fr}.vB .hero aside{border-left:0;padding-left:0}}
+.vB .sec{padding:96px 0;border-bottom:1px solid var(--line-strong)}
+.vB h2{margin:12px 0 0;font-family:var(--f-display);font-weight:400;font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-.015em}
+.vB .sec-head{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:56px}
+@media (max-width:860px){.vB .sec-head{grid-template-columns:1fr;gap:28px}}
+.vB ol.toc{margin:0;padding:0;list-style:none}
+.vB ol.toc li{display:grid;grid-template-columns:64px 1fr;gap:16px;padding:22px 0;border-top:1px solid var(--line)}
+.vB ol.toc li:last-child{border-bottom:1px solid var(--line)}
+.vB ol.toc .n{font-family:var(--f-display);font-style:italic;font-size:30px;line-height:1;color:var(--accent)}
+.vB ol.toc h3{margin:0 0 4px;font-family:var(--f-display);font-weight:600;font-size:22px}
+.vB ol.toc p{margin:0;color:var(--ink-2);font-size:17px}
+.vB .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px 56px;margin-top:56px}
+.vB blockquote{margin:0;display:flex;flex-direction:column;gap:14px}
+.vB blockquote p{margin:0;font-family:var(--f-display);font-style:italic;font-size:28px;line-height:1.25}
+.vB blockquote a{font-family:var(--f-ui);font-size:14px;font-weight:600;color:var(--accent-ink);text-underline-offset:5px}
+.vB .cols4{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:40px;margin-top:56px}
+.vB .cols4 .n{font-family:var(--f-display);font-size:64px;line-height:1;color:var(--line-strong)}
+.vB .cols4 h3{margin:10px 0 8px;font-family:var(--f-display);font-weight:600;font-size:22px}
+.vB .cols4 p{margin:0;font-size:16px;color:var(--ink-2)}
+.vB .promise{margin:64px auto 0;max-width:640px;background:var(--surface);border:1px solid var(--line);padding:36px 40px;font-size:18px}
+.vB .promise ul{margin:12px 0 18px;padding-left:20px}
+.vB .promise .sig{font-family:var(--f-display);font-style:italic;font-size:24px;text-align:right}
+.vB .final{padding:112px 0;text-align:center}
+.vB .final h2{max-width:820px;margin:16px auto 20px}
+.vB .final p{margin:0 auto 32px;color:var(--ink-2);max-width:560px}
+.vB footer{padding:28px 0;font-family:var(--f-ui);font-size:13px;color:var(--muted);border-top:1px solid var(--line-strong)}
+.vB footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+/* récit B */
+.vB .r-head{padding:72px 0 40px;text-align:center}
+.vB .r-title{margin:20px auto 0;max-width:900px;font-family:var(--f-display);font-weight:400;font-size:clamp(36px,5vw,64px);line-height:1.06;letter-spacing:-.015em}
+.vB .r-chapo{margin:24px auto 0;max-width:640px;font-style:italic;font-size:21px;color:var(--ink-2)}
+.vB .r-meta{margin-top:24px;font-family:var(--f-ui);font-size:13px;color:var(--muted)}
+.vB .r-grid{display:grid;grid-template-columns:200px minmax(0,680px) 1fr;gap:48px;padding-bottom:96px}
+@media (max-width:980px){.vB .r-grid{grid-template-columns:1fr}.vB .r-grid .margin{order:-1}}
+.vB .margin{font-family:var(--f-ui);font-size:13px;color:var(--ink-2);display:flex;flex-direction:column;gap:14px;padding-top:6px}
+.vB .margin dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.vB .margin dd{margin:2px 0 0}
+.vB .enbref{border-top:2px solid var(--ink);border-bottom:1px solid var(--ink);padding:22px 0;margin-bottom:40px;display:flex;flex-direction:column;gap:10px}
+.vB .enbref p{margin:0;font-size:17px}.vB .enbref b{font-family:var(--f-ui);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin-right:8px}
+.vB .r-body{font-size:20px;line-height:1.75}
+.vB .r-body > p:first-of-type::first-letter{float:left;font-family:var(--f-display);font-size:76px;line-height:.85;padding:6px 10px 0 0;color:var(--accent)}
+.vB .r-body h2{font-size:32px;margin:48px 0 14px}
+.vB .r-body p{margin:0 0 22px}
+.vB .fig{margin:36px 0 8px;height:300px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--f-ui);font-size:13px;color:var(--muted)}
+.vB figcaption{font-family:var(--f-ui);font-size:13px;color:var(--muted);margin-bottom:32px}
+.vB .r-end{margin-top:56px;border-top:1px solid var(--line-strong);padding-top:36px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
+.vB .r-end h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:32px}
+.vB .r-next{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:28px;text-align:left}
+@media (max-width:640px){.vB .r-next{grid-template-columns:1fr}}
+.vB .r-next a{text-decoration:none;border-top:1px solid var(--line-strong);padding-top:14px}
+.vB .r-next small{font-family:var(--f-ui);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.vB .r-next b{display:block;margin-top:6px;font-family:var(--f-display);font-weight:400;font-size:22px;line-height:1.25}
+
+/* =====================================================================
+   VARIANTE C — « Schéma » : plan technique, mono, la friction devient flux
+   ===================================================================== */
+.vC{--bg:#FAFAF8;--surface:#fff;--ink:#101418;--ink-2:#3B424B;--muted:#5C6570;--line:#E1E3E6;--line-strong:#C3C8CE;
+  --accent:#C2410C;--accent-ink:#B23B0B;--cta-bg:#101418;--cta-fg:#fff;--nav-bg:rgba(250,250,248,.9);
+  --tile-bg:#101418;--tile-fg:#fff;--f-tile:'IBM Plex Mono',monospace;
+  --f-display:'IBM Plex Sans',system-ui,sans-serif;--f-body:'IBM Plex Sans',system-ui,sans-serif;--f-mono:'IBM Plex Mono',ui-monospace,monospace;
+  --radius:4px;--radius-lg:8px;font-size:17px;line-height:1.6}
+.vC main{background-image:radial-gradient(#D9DCE0 1px,transparent 1px);background-size:24px 24px}
+.vC .mono{font-family:var(--f-mono)}
+.vC .nav nav a.l{font-family:var(--f-mono);font-size:14px}
+.vC .brand b{font-family:var(--f-mono);font-weight:500;font-size:16px}
+.vC .cta{font-family:var(--f-mono);font-weight:500;font-size:14px}
+.vC .cta::after{content:"→"}
+.vC .hero{padding:80px 0 88px}
+.vC .hero-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:48px;align-items:center}
+@media (max-width:900px){.vC .hero-grid{grid-template-columns:1fr}}
+.vC .tag{display:inline-block;font-family:var(--f-mono);font-size:13px;color:var(--accent-ink);background:#FFF1EA;border:1px solid #F6CDB7;border-radius:4px;padding:5px 10px}
+.vC h1{margin:22px 0 0;font-weight:600;font-size:clamp(34px,4.8vw,58px);line-height:1.08;letter-spacing:-.025em}
+.vC .lede{margin:22px 0 0;font-size:19px;color:var(--ink-2);max-width:620px}
+.vC .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.vC .diagram{background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:20px}
+.vC .diagram .cap{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:8px}
+.vC .sec{padding:88px 0;border-top:1px solid var(--line)}
+.vC .sec-label{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC h2{margin:8px 0 36px;font-weight:600;font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em;line-height:1.12}
+.vC .spec{border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);overflow:hidden}
+.vC .spec div{display:grid;grid-template-columns:260px 1fr;border-top:1px solid var(--line)}
+.vC .spec div:first-child{border-top:0}
+.vC .spec dt{padding:18px 22px;font-family:var(--f-mono);font-size:14px;color:var(--accent-ink);border-right:1px solid var(--line);background:#FCFCFB}
+.vC .spec dd{margin:0;padding:18px 22px}
+.vC .spec dd b{display:block;font-weight:600}
+.vC .spec dd span{color:var(--ink-2);font-size:15px}
+@media (max-width:700px){.vC .spec div{grid-template-columns:1fr}.vC .spec dt{border-right:0;border-bottom:1px solid var(--line)}}
+.vC .tickets{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.vC .ticket{background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.vC .ticket header{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.vC .ticket header span:last-child{color:var(--accent-ink)}
+.vC .ticket p{margin:0;font-size:18px;font-weight:500;line-height:1.35}
+.vC .ticket a{margin-top:auto;font-family:var(--f-mono);font-size:13px;color:var(--ink);text-underline-offset:4px}
+.vC .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;position:relative}
+.vC .flow li{list-style:none;position:relative;padding:0 18px 0 0}
+.vC .flow .node{display:flex;align-items:center;gap:0;margin-bottom:18px}
+.vC .flow .dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;flex:none}
+.vC .flow li:last-child .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+.vC .flow .wire{flex:1;height:2px;background:var(--ink)}
+.vC .flow li:last-child .wire{background:repeating-linear-gradient(90deg,var(--accent) 0 6px,transparent 6px 12px)}
+.vC .flow h3{margin:0 0 6px;font-size:19px;font-weight:600}
+.vC .flow p{margin:0;font-size:15px;color:var(--ink-2)}
+.vC ol.flow{margin:0;padding:0}
+@media (max-width:860px){.vC .flow{grid-template-columns:1fr 1fr;row-gap:36px}}
+@media (max-width:520px){.vC .flow{grid-template-columns:1fr}}
+.vC .loop{margin-top:28px;font-family:var(--f-mono);font-size:13px;color:var(--accent-ink)}
+.vC .guar{margin-top:40px;display:flex;flex-wrap:wrap;gap:10px}
+.vC .guar span{font-family:var(--f-mono);font-size:13px;border:1px solid var(--line-strong);background:var(--surface);border-radius:4px;padding:8px 12px}
+.vC .guar span::before{content:"✓ ";color:var(--accent-ink)}
+.vC .final{padding:96px 0;border-top:1px solid var(--line)}
+.vC .final .box{background:var(--ink);color:#fff;border-radius:10px;padding:48px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center}
+.vC .final h2{color:#fff;margin:0 0 10px}
+.vC .final p{margin:0;color:#B7BEC7}
+.vC .final .cta{background:var(--accent);color:#fff}
+@media (max-width:760px){.vC .final .box{grid-template-columns:1fr;padding:32px}}
+.vC footer{padding:24px 0;font-family:var(--f-mono);font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+.vC footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+/* récit C */
+.vC .r-grid{display:grid;grid-template-columns:220px minmax(0,760px);gap:56px;padding:56px 0 96px}
+@media (max-width:960px){.vC .r-grid{grid-template-columns:1fr}.vC .toc{display:none}}
+.vC .toc{position:sticky;top:96px;align-self:start;font-family:var(--f-mono);font-size:13px;display:flex;flex-direction:column;gap:10px}
+.vC .toc a{text-decoration:none;color:var(--muted)}.vC .toc a.on{color:var(--ink)}.vC .toc a.on::before{content:"▸ ";color:var(--accent)}
+.vC .crumb{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC .crumb a{color:var(--accent-ink);text-decoration:none}
+.vC .r-title{margin:16px 0 0;font-weight:600;font-size:clamp(32px,4vw,48px);line-height:1.1;letter-spacing:-.02em}
+.vC .r-chapo{margin:18px 0 0;font-size:20px;color:var(--ink-2)}
+.vC .r-sum{margin:36px 0 0;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:0}
+.vC .r-sum .b{background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:16px}
+.vC .r-sum .b:last-child{border-color:var(--accent)}
+.vC .r-sum .arr{display:flex;align-items:center;padding:0 8px;font-family:var(--f-mono);color:var(--muted)}
+.vC .r-sum h4{margin:0 0 6px;font-family:var(--f-mono);font-weight:500;font-size:12px;color:var(--accent-ink)}
+.vC .r-sum p{margin:0;font-size:15px;line-height:1.45}
+@media (max-width:760px){.vC .r-sum{grid-template-columns:1fr}.vC .r-sum .arr{justify-content:center;padding:6px 0;transform:rotate(90deg)}}
+.vC .fiche{margin:24px 0 0;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--f-mono);font-size:13px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.vC .fiche div{padding:12px 14px;border-right:1px solid var(--line)}
+.vC .fiche dt{color:var(--muted);font-size:11px}
+.vC .fiche dd{margin:4px 0 0}
+.vC .r-body{margin-top:48px;font-size:18px;line-height:1.75}
+.vC .r-body h2{font-size:26px;margin:52px 0 12px}
+.vC .r-body h2 span{font-family:var(--f-mono);font-weight:400;font-size:15px;color:var(--accent-ink);margin-right:10px}
+.vC .r-body p{margin:0 0 20px}
+.vC .fig{margin:32px 0;height:300px;border:1px dashed var(--line-strong);border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC .r-end{margin-top:56px;background:var(--ink);color:#fff;border-radius:10px;padding:32px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px}
+.vC .r-end h3{margin:0;font-size:24px;font-weight:600}
+.vC .r-end .cta{background:var(--accent);color:#fff}
+.vC .r-next{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.vC .r-next a{display:block;text-decoration:none;background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:18px}
+.vC .r-next small{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.vC .r-next b{display:block;margin-top:6px;font-weight:600;font-size:18px;line-height:1.3}
+
+/* =====================================================================
+   VARIANTE D — « B × C » : mise en page épurée de B, couleurs et composants de C
+   (body = .vC.vD : hérite de C, surcharge ici). E = D avec titres en Space Grotesk.
+   ===================================================================== */
+.vD{--f-tile:'IBM Plex Sans',sans-serif}
+.vE{--f-display:'Space Grotesk',sans-serif;--f-tile:'Space Grotesk',sans-serif}
+.vC.vD main{background-image:none}
+.vD h1,.vD h2,.vD h3,.vD .r-title,.vD .brand b{font-family:var(--f-display)}
+.vC.vD .brand b{font-weight:600;font-size:17px}
+.vD .surt{display:flex;align-items:center;gap:16px;margin:0;font-family:var(--f-mono);font-size:13px;color:var(--accent-ink)}
+.vD .surt::after{content:"";flex:1;height:1px;background:var(--line-strong)}
+.vD .surt.c::before{content:"";flex:1;height:1px;background:var(--line-strong)}
+.vC.vD .hero{padding:72px 0 88px;border-bottom:1px solid var(--line)}
+.vC.vD .hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:56px;align-items:end;margin-top:44px}
+.vC.vD h1{margin:0;font-size:clamp(40px,5.6vw,74px);line-height:1.04;letter-spacing:-.03em;font-weight:600}
+.vD h1 em{font-style:normal;color:var(--accent-ink)}
+.vD .hero aside{border-left:1px solid var(--line-strong);padding-left:28px}
+.vC.vD .lede{margin:0 0 28px;font-size:18px}
+.vC.vD .btns{flex-direction:column;align-items:flex-start;margin-top:0;gap:16px}
+.vD .more{font-family:var(--f-mono);font-size:14px;text-underline-offset:5px}
+@media (max-width:900px){.vC.vD .hero-grid{grid-template-columns:1fr}.vD .hero aside{border-left:0;padding-left:0}}
+.vC.vD .sec{padding:96px 0;border-top:0;border-bottom:1px solid var(--line)}
+.vC.vD h2{margin:10px 0 40px}
+.vD .sec-head{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:56px}
+.vD .sec-head h2{margin-bottom:0}
+@media (max-width:860px){.vD .sec-head{grid-template-columns:1fr;gap:24px}}
+.vD ol.toc{margin:0;padding:0;list-style:none}
+.vD ol.toc li{display:grid;grid-template-columns:56px 1fr;gap:16px;padding:22px 0;border-top:1px solid var(--line)}
+.vD ol.toc li:last-child{border-bottom:1px solid var(--line)}
+.vD ol.toc .n{font-family:var(--f-mono);font-size:14px;color:var(--accent-ink);padding-top:3px}
+.vD ol.toc h3{margin:0 0 4px;font-size:20px;font-weight:600}
+.vD ol.toc p{margin:0;color:var(--ink-2);font-size:16px}
+.vD .promise{margin-top:56px;border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:28px 32px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.vD .promise ul{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.vD .promise li::before{content:"✓ ";color:var(--accent-ink);font-family:var(--f-mono)}
+.vD .promise p{margin:0;color:var(--ink-2)}
+@media (max-width:700px){.vD .promise{grid-template-columns:1fr}}
+.vC.vD .final{padding:112px 0;text-align:center;border-top:0}
+.vD .final h2{max-width:820px;margin:18px auto 18px}
+.vD .final p{margin:0 auto 32px;color:var(--ink-2);max-width:560px}
+.vD .r-head{padding:72px 0 44px;text-align:center}
+.vC.vD .r-title{margin:22px auto 0;max-width:900px;font-size:clamp(34px,4.6vw,58px);line-height:1.08}
+.vC.vD .r-chapo{margin:22px auto 0;max-width:640px}
+.vD .r-meta{margin-top:20px;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.vC.vD .r-grid{grid-template-columns:200px minmax(0,700px) 1fr;gap:48px;padding:0 0 96px}
+@media (max-width:980px){.vC.vD .r-grid{grid-template-columns:1fr}}
+.vD .margin{position:sticky;top:96px;align-self:start;margin:0;font-family:var(--f-mono);font-size:13px;display:flex;flex-direction:column;gap:14px;padding-top:6px}
+.vD .margin dt{font-size:11px;color:var(--muted)}
+.vD .margin dd{margin:2px 0 0}
+@media (max-width:980px){.vD .margin{position:static;flex-direction:row;flex-wrap:wrap;gap:12px 24px}}
+.vC.vD .r-sum{margin-top:0}
+.vD .chain{margin:56px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+.vD .chain li{display:flex;align-items:center;gap:12px;font-size:16px;color:var(--ink-2);position:relative;padding-right:24px}
+.vD .chain li:not(:last-child)::after{content:"";flex:1;min-width:24px;height:2px;background:var(--ink)}
+.vD .chain li span:nth-child(2){max-width:220px}
+.vD .chain b{color:var(--ink);font-weight:600}
+.vD .chain .dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;flex:none;background:var(--surface)}
+.vD .chain li:nth-child(2) .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+@media (max-width:760px){.vD .chain{grid-template-columns:1fr;gap:14px}.vD .chain li::after{display:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="modal-bg" id="brief" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="brief-t">
+    <div class="steps" aria-label="Étape 1 sur 3"><span class="on"></span><span></span><span></span></div>
+    <h2 id="brief-t">Décrivez votre besoin</h2>
+    <label for="brief-txt">Ce qui vous fait perdre du temps aujourd'hui</label>
+    <textarea id="brief-txt" placeholder="Par exemple : nos techniciens remplissent des bons d'intervention papier, ressaisis le soir au bureau…"></textarea>
+    <p class="note">Vous pouvez aussi dicter votre besoin. Le micro ne s'active qu'après votre clic.</p>
+    <div class="row">
+      <button class="cta ghost" type="button">Dicter</button>
+      <div style="display:flex;gap:10px">
+        <button class="cta ghost" type="button" data-close>Fermer</button>
+        <button class="cta" type="button">Continuer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="proto" role="toolbar" aria-label="Bascule du prototype">
+  <button type="button" id="prev" aria-label="Variante précédente">←</button>
+  <span class="lbl" id="lbl"></span>
+  <button type="button" id="next" aria-label="Variante suivante">→</button>
+  <span class="sep"></span>
+  <button type="button" data-page="accueil">Accueil</button>
+  <button type="button" data-page="recit">Récit</button>
+</div>
+
+<script>
+// ---------- contenu (issu des tickets résolus) ----------
+const C = {
+  surtitre: "Optimisation des processus & outils sur mesure",
+  titre: "J'optimise vos processus là où ça compte, pour que votre équipe se concentre sur ce qui a de la valeur.",
+  sousTitre: "Un regard extérieur, opérationnel et technique, sur votre fonctionnement : je repère les points de friction, puis je conçois et construis les outils sur mesure qui les suppriment, avec ou sans IA. Et j'en assure la maintenance dans la durée.",
+  approche: [
+    ["Un regard extérieur", "J'analyse votre fonctionnement tel qu'il est, pas tel qu'il est écrit."],
+    ["L'humain libéré", "L'outil prend les tâches ingrates ; votre équipe garde ce qui demande du jugement."],
+    ["Des propositions neuves", "Pas de catalogue : une réponse pensée pour votre cas, IA comprise quand elle sert."],
+    ["Mesurable", "Le temps passé est compté avant, puis après la mise en service."],
+    ["Adapté à vous", "L'outil s'adapte à votre façon de travailler, pas l'inverse."]
+  ],
+  frictions: [
+    "Les bons d'intervention papier sont ressaisis le soir au bureau.",
+    "Les mêmes données sont ressaisies dans plusieurs outils.",
+    "Le bilan de la semaine est monté à la main, tous les vendredis.",
+    "Les demandes reçues par e-mail sont recopiées à la main."
+  ],
+  etapes: [
+    ["Échange", "Votre brief, puis un appel."],
+    ["Devis ou diagnostic", "Besoin cadré : devis au forfait, gratuit. Besoin à explorer : un diagnostic sur place, sur un nombre de jours convenu."],
+    ["Construction", "Des livraisons régulières. Pour un projet important, une première version mise en service pour affiner en conditions réelles."],
+    ["Mise en service et mesure", "Temps passé avant et après, puis la maintenance prend le relais si vous le souhaitez."]
+  ],
+  duree: "Aucune durée minimale ni maximale : d'une demi-journée pour un besoin précis à plusieurs mois pour un projet important.",
+  garanties: ["Prix ferme connu avant de commencer", "Devis rapide", "Vous êtes propriétaire du code et des outils"],
+  recit: {
+    titre: "PUM : un outil de coordination d'équipes sur mesure pour les paroisses",
+    chapo: "J'ai vécu de l'intérieur les difficultés de coordination des célébrations dans plusieurs paroisses. J'en ai fait un service ouvert à toutes : preparerunemesse.fr, en bêta avec ses premiers utilisateurs.",
+    friction: "[À recueillir : comment se préparait une messe avant, ce qui se perdait.]",
+    solution: "Un service commun : calendrier des messes, équipes, choix des chants et programme. Plusieurs paroisses sur une même instance.",
+    resultat: "En production, en bêta, avec des utilisateurs. [Avant/après à vérifier.]",
+    fiche: [["Cadre","Projet personnel"],["Rôle","Conception et développement"],["Période","Sept. 2026 → en cours"],["Statut","En bêta"],["Stack","Go"]],
+    date: "Novembre 2026", lecture: "[x] min de lecture",
+    sections: ["Le point de friction", "La démarche", "Le système", "Le résultat", "Ce que j'en retiens"]
+  },
+  autres: [
+    ["Poste · lead technique", "Lizee : automatiser les commandes de transport avec une dizaine de transporteurs"],
+    ["Mission", "SambaÉdu : la refonte d'un logiciel métier pour les écoles du Val-d'Oise"]
+  ]
+};
+const esc = s => s;
+const body = (n=2) => Array.from({length:n}, () => `<p class="ph">[Texte du récit, rédigé en binôme. Ce paragraphe tient la place d'un développement réel : il sert à juger la lecture longue, la taille du corps, l'interlignage et le rythme entre titres, paragraphes et illustrations.]</p>`).join("");
+
+// ---------- logo (tuile monogramme) ----------
+function tile(size){
+  const r = Math.round(size*.22), d = Math.max(4, Math.round(size*.12)), o = Math.round(size*.15);
+  return `<span class="tile" role="img" aria-label="ht" style="width:${size}px;height:${size}px;border-radius:${r}px;font-size:${Math.round(size*.5)}px">ht<i style="width:${d}px;height:${d}px;right:${o}px;bottom:${o}px"></i></span>`;
+}
+function navBar(page){
+  return `<header class="nav"><div class="wrap">
+    <a class="brand" href="?page=accueil" data-go="accueil">${tile(36)}<b>Henri Touchard</b></a>
+    <nav aria-label="Navigation principale">
+      <a class="l" href="?page=recit" data-go="recit" ${page==='recit'?'aria-current="page"':''}>Expériences et réalisations</a>
+      <a class="l" href="#">À propos</a>
+      <a class="cta" href="#" data-brief>Décrivez votre besoin</a>
+    </nav></div></header>`;
+}
+const footer = () => `<footer><div class="wrap"><span>Henri Touchard · Optimisation opérationnelle</span><span>Mentions légales et confidentialité</span></div></footer>`;
+
+// =============== A — Continuité ===============
+const A = {
+  name: "Continuité",
+  accueil: () => `${navBar('accueil')}<main>
+  <section class="hero"><div class="wrap">
+    <p class="eyebrow">${C.surtitre}</p>
+    <h1>${C.titre}</h1>
+    <p class="lede">${C.sousTitre}</p>
+    <div class="btns"><a class="cta" href="#" data-brief>Décrivez votre besoin</a><a class="cta ghost" href="?page=recit" data-go="recit">Voir des réalisations</a></div>
+  </div></section>
+  <section class="band"><div class="wrap sec">
+    <h2>Approche</h2><p class="sec-intro">Ce qui change quand on regarde votre fonctionnement de l'extérieur.</p>
+    <div class="grid5">${C.approche.map((a,i)=>`<div class="card"><span class="n">0${i+1}</span><h3>${a[0]}</h3><p>${a[1]}</p></div>`).join("")}</div>
+  </div></section>
+  <section><div class="wrap sec">
+    <h2>Ça vous parle ?</h2><p class="sec-intro">Quelques points de friction que je rencontre souvent.</p>
+    <div class="grid2">${C.frictions.map(f=>`<div class="fr"><p>« ${f} »</p><a href="#" data-brief>Décrivez votre besoin →</a></div>`).join("")}</div>
+  </div></section>
+  <section class="band"><div class="wrap sec">
+    <h2>Comment je travaille</h2><p class="sec-intro">${C.duree}</p>
+    <ol class="steps4">${C.etapes.map((e,i)=>`<li><span class="n">0${i+1}</span><h3>${e[0]}</h3><p>${e[1]}</p></li>`).join("")}</ol>
+    <div class="guar">${C.garanties.map(g=>`<span>${g}</span>`).join("")}</div>
+  </div></section>
+  <section class="final"><div class="wrap">
+    <h2>Un processus vous coûte du temps ?</h2><p>Décrivez-le en quelques lignes, à l'écrit ou à la voix. Je vous réponds avec une première lecture du problème.</p>
+    <a class="cta" href="#" data-brief>Décrivez votre besoin</a>
+  </div></section></main>${footer()}`,
+  recit: () => { const R=C.recit; return `${navBar('recit')}<main><article class="narrow">
+    <p class="crumb"><a href="#">Expériences et réalisations</a> / PUM</p>
+    <h1 class="r-title">${R.titre}</h1>
+    <p class="r-chapo">${R.chapo}</p>
+    <p class="r-meta"><span>${R.date}</span><span>${R.lecture}</span><span>Projet personnel</span></p>
+    <div class="r-sum"><div><h4>Friction</h4><p>${R.friction}</p></div><div><h4>Solution</h4><p>${R.solution}</p></div><div><h4>Résultat</h4><p>${R.resultat}</p></div></div>
+    <p class="r-fiche">${R.fiche.map(f=>`<span><b>${f[0]}</b> ${f[1]}</span>`).join("")}</p>
+    <div class="r-body">
+      <h2>${R.sections[0]}</h2>${body(2)}
+      <h2>${R.sections[1]}</h2>${body(2)}
+      <div class="fig">Capture d'écran : le calendrier des messes</div>
+      <h2>${R.sections[2]}</h2>${body(1)}
+      <h2>${R.sections[3]}</h2>${body(1)}
+      <h2>${R.sections[4]}</h2>${body(1)}
+    </div>
+    <div class="r-end"><h3>Un point de friction qui ressemble au vôtre ?</h3><a class="cta" href="#" data-brief>Décrivez votre besoin</a></div>
+    <div class="r-next">${C.autres.map(a=>`<a href="#"><small>${a[0]}</small><b>${a[1]}</b></a>`).join("")}</div>
+  </article></main>${footer()}`; }
+};
+
+// =============== B — Atelier ===============
+const roman = ["I","II","III","IV","V"];
+const B = {
+  name: "Atelier",
+  accueil: () => `${navBar('accueil')}<main>
+  <section class="hero"><div class="wrap">
+    <p class="smallcaps rule">${C.surtitre}</p>
+    <div class="hero-grid">
+      <h1>J'optimise vos processus <em>là où ça compte</em>, pour que votre équipe se concentre sur ce qui a de la valeur.</h1>
+      <aside><p class="lede">${C.sousTitre}</p>
+        <div class="btns"><a class="cta" href="#" data-brief>Décrivez votre besoin</a><a class="more" href="?page=recit" data-go="recit">Voir des réalisations</a></div></aside>
+    </div>
+  </div></section>
+  <section class="sec"><div class="wrap sec-head">
+    <div><p class="smallcaps">Approche</p><h2>Ce que j'apporte à l'établi</h2></div>
+    <ol class="toc">${C.approche.map((a,i)=>`<li><span class="n">${roman[i]}</span><div><h3>${a[0]}</h3><p>${a[1]}</p></div></li>`).join("")}</ol>
+  </div></section>
+  <section class="sec"><div class="wrap">
+    <p class="smallcaps">Points de friction</p><h2>Ça vous parle ?</h2>
+    <div class="quotes">${C.frictions.map(f=>`<blockquote><p>« ${f} »</p><a href="#" data-brief>Décrivez votre besoin</a></blockquote>`).join("")}</div>
+  </div></section>
+  <section class="sec"><div class="wrap">
+    <p class="smallcaps">Comment je travaille</p><h2>Quatre temps, sans durée imposée</h2>
+    <div class="cols4">${C.etapes.map((e,i)=>`<div><span class="n">${i+1}</span><h3>${e[0]}</h3><p>${e[1]}</p></div>`).join("")}</div>
+    <div class="promise"><p class="smallcaps">Mes engagements</p>
+      <ul>${C.garanties.map(g=>`<li>${g}</li>`).join("")}</ul>
+      <p style="margin:0 0 14px;color:var(--ink-2);font-size:16px">${C.duree}</p>
+      <p class="sig">Henri</p></div>
+  </div></section>
+  <section class="final"><div class="wrap">
+    <p class="smallcaps rule">Votre besoin</p>
+    <h2>Un processus vous coûte du temps ? Racontez-le-moi.</h2>
+    <p>Quelques lignes suffisent, à l'écrit ou à la voix. Je vous réponds avec une première lecture du problème.</p>
+    <a class="cta" href="#" data-brief>Décrivez votre besoin</a>
+  </div></section></main>${footer()}`,
+  recit: () => { const R=C.recit; return `${navBar('recit')}<main>
+    <header class="r-head wrap"><p class="smallcaps rule">Expériences et réalisations</p>
+      <h1 class="r-title">${R.titre}</h1><p class="r-chapo">${R.chapo}</p>
+      <p class="r-meta">${R.date} · ${R.lecture}</p></header>
+    <div class="wrap r-grid">
+      <dl class="margin">${R.fiche.map(f=>`<div><dt>${f[0]}</dt><dd>${f[1]}</dd></div>`).join("")}</dl>
+      <article>
+        <div class="enbref"><p class="smallcaps" style="margin:0 0 4px">En bref</p>
+          <p><b>Friction</b>${R.friction}</p><p><b>Solution</b>${R.solution}</p><p><b>Résultat</b>${R.resultat}</p></div>
+        <div class="r-body">
+          ${body(1).replace('class="ph"','')}
+          <h2>${R.sections[0]}</h2>${body(1)}
+          <h2>${R.sections[1]}</h2>${body(2)}
+          <div class="fig">Capture d'écran</div><figcaption>Le calendrier des messes, partagé entre les équipes.</figcaption>
+          <h2>${R.sections[2]}</h2>${body(1)}
+          <h2>${R.sections[3]}</h2>${body(1)}
+          <h2>${R.sections[4]}</h2>${body(1)}
+        </div>
+        <div class="r-end"><h3>Un point de friction qui ressemble au vôtre ?</h3><a class="cta" href="#" data-brief>Décrivez votre besoin</a>
+          <div class="r-next">${C.autres.map(a=>`<a href="#"><small>${a[0]}</small><b>${a[1]}</b></a>`).join("")}</div></div>
+      </article><div></div>
+    </div></main>${footer()}`; }
+};
+
+// =============== C — Schéma ===============
+const diagram = `<div class="diagram" aria-hidden="true"><div class="cap"><span>avant</span><span>après</span></div>
+<svg viewBox="0 0 440 200" width="100%">
+  <path d="M10 120 C40 120 60 60 95 60 C130 60 120 150 85 140 C50 130 90 40 140 70 C185 96 150 160 120 130 C95 105 160 80 190 110 C210 130 205 100 230 100"
+    fill="none" stroke="#101418" stroke-width="3" stroke-linecap="round"/>
+  <path d="M230 100 L410 100" fill="none" stroke="#C2410C" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="420" cy="100" r="6" fill="#C2410C"/>
+  <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#5C6570">
+    <text x="30" y="185">ressaisies · relances · tableurs</text><text x="262" y="130">un outil, un flux</text></g>
+  <line x1="230" y1="20" x2="230" y2="180" stroke="#C3C8CE" stroke-dasharray="3 4"/>
+</svg></div>`;
+const Cv = {
+  name: "Schéma",
+  accueil: () => `${navBar('accueil')}<main>
+  <section class="hero"><div class="wrap hero-grid">
+    <div><span class="tag">${C.surtitre}</span><h1>${C.titre}</h1><p class="lede">${C.sousTitre}</p>
+      <div class="btns"><a class="cta" href="#" data-brief>Décrivez votre besoin</a><a class="cta ghost" href="?page=recit" data-go="recit">Voir des réalisations</a></div></div>
+    ${diagram}
+  </div></section>
+  <section class="sec"><div class="wrap">
+    <p class="sec-label">01 / approche</p><h2>Comment je regarde votre fonctionnement</h2>
+    <dl class="spec">${C.approche.map((a,i)=>`<div><dt>${a[0].toLowerCase()}</dt><dd><span>${a[1]}</span></dd></div>`).join("")}</dl>
+  </div></section>
+  <section class="sec"><div class="wrap">
+    <p class="sec-label">02 / points de friction</p><h2>Ça vous parle ?</h2>
+    <div class="tickets">${C.frictions.map((f,i)=>`<article class="ticket"><header><span>friction-0${i+1}</span><span>● à optimiser</span></header><p>${f}</p><a href="#" data-brief>décrire votre besoin →</a></article>`).join("")}</div>
+  </div></section>
+  <section class="sec"><div class="wrap">
+    <p class="sec-label">03 / comment je travaille</p><h2>Un processus en quatre étapes</h2>
+    <ol class="flow">${C.etapes.map((e,i)=>`<li><div class="node"><span class="dot">${i+1}</span><span class="wire"></span></div><h3>${e[0]}</h3><p>${e[1]}</p></li>`).join("")}</ol>
+    <p class="loop">↻ puis maintenance mensuelle, facultative et sans engagement long</p>
+    <div class="guar">${C.garanties.map(g=>`<span>${g}</span>`).join("")}</div>
+  </div></section>
+  <section class="final"><div class="wrap"><div class="box">
+    <div><h2>Un processus vous coûte du temps ?</h2><p>Décrivez-le en quelques lignes, à l'écrit ou à la voix.</p></div>
+    <a class="cta" href="#" data-brief>Décrivez votre besoin</a></div></div></section></main>${footer()}`,
+  recit: () => { const R=C.recit; return `${navBar('recit')}<main><div class="wrap r-grid">
+    <nav class="toc" aria-label="Sommaire">${["En bref",...R.sections].map((s,i)=>`<a href="#" class="${i===0?'on':''}">${String(i).padStart(2,'0')} ${s.toLowerCase()}</a>`).join("")}</nav>
+    <article>
+      <p class="crumb"><a href="#">réalisations</a> / pum</p>
+      <h1 class="r-title">${R.titre}</h1><p class="r-chapo">${R.chapo}</p>
+      <div class="r-sum"><div class="b"><h4>friction</h4><p>${R.friction}</p></div><span class="arr">→</span><div class="b"><h4>solution</h4><p>${R.solution}</p></div><span class="arr">→</span><div class="b"><h4>résultat</h4><p>${R.resultat}</p></div></div>
+      <dl class="fiche">${R.fiche.map(f=>`<div><dt>${f[0].toLowerCase()}</dt><dd>${f[1]}</dd></div>`).join("")}</dl>
+      <div class="r-body">
+        ${R.sections.map((s,i)=>`<h2><span>0${i+1}</span>${s}</h2>${body(i===1?2:1)}${i===2?'<div class="fig">capture : calendrier des messes · schéma des équipes</div>':''}`).join("")}
+      </div>
+      <div class="r-end"><h3>Un point de friction qui ressemble au vôtre ?</h3><a class="cta" href="#" data-brief>Décrivez votre besoin</a></div>
+      <div class="r-next">${C.autres.map(a=>`<a href="#"><small>${a[0].toLowerCase()}</small><b>${a[1]}</b></a>`).join("")}</div>
+    </article></div></main>${footer()}`; }
+};
+
+// =============== D / E — B × C ===============
+const mixAccueil = () => `${navBar('accueil')}<main>
+  <section class="hero"><div class="wrap">
+    <p class="surt">${C.surtitre.toLowerCase()}</p>
+    <div class="hero-grid">
+      <h1>J'optimise vos processus <em>là où ça compte</em>, pour que votre équipe se concentre sur ce qui a de la valeur.</h1>
+      <aside><p class="lede">${C.sousTitre}</p>
+        <div class="btns"><a class="cta" href="#" data-brief>Décrivez votre besoin</a><a class="more" href="?page=recit" data-go="recit">voir des réalisations →</a></div></aside>
+    </div>
+    <ol class="chain">
+      <li><span class="dot">1</span><span><b>Je repère</b> les points de friction</span></li>
+      <li><span class="dot">2</span><span><b>Je construis</b> l'outil sur mesure qui les supprime</span></li>
+      <li><span class="dot">3</span><span><b>Je le maintiens</b> dans la durée</span></li>
+    </ol>
+  </div></section>
+  <section class="sec"><div class="wrap sec-head">
+    <div><p class="sec-label">01 / approche</p><h2>Comment je regarde votre fonctionnement</h2></div>
+    <ol class="toc">${C.approche.map((a,i)=>`<li><span class="n">0${i+1}</span><div><h3>${a[0]}</h3><p>${a[1]}</p></div></li>`).join("")}</ol>
+  </div></section>
+  <section class="sec"><div class="wrap">
+    <p class="sec-label">02 / points de friction</p><h2>Ça vous parle ?</h2>
+    <div class="tickets">${C.frictions.map((f,i)=>`<article class="ticket"><header><span>friction-0${i+1}</span><span>● à optimiser</span></header><p>${f}</p><a href="#" data-brief>décrire votre besoin →</a></article>`).join("")}</div>
+  </div></section>
+  <section class="sec"><div class="wrap">
+    <p class="sec-label">03 / comment je travaille</p><h2>Un processus en quatre étapes</h2>
+    <ol class="flow">${C.etapes.map((e,i)=>`<li><div class="node"><span class="dot">${i+1}</span><span class="wire"></span></div><h3>${e[0]}</h3><p>${e[1]}</p></li>`).join("")}</ol>
+    <p class="loop">↻ puis maintenance mensuelle, facultative et sans engagement long</p>
+    <div class="promise"><div><p class="sec-label">mes engagements</p><ul>${C.garanties.map(g=>`<li>${g}</li>`).join("")}</ul></div>
+      <div><p class="sec-label" style="margin-bottom:12px">durée</p><p>${C.duree}</p></div></div>
+  </div></section>
+  <section class="final"><div class="wrap">
+    <p class="surt c">votre besoin</p>
+    <h2>Un processus vous coûte du temps ?</h2>
+    <p>Décrivez-le en quelques lignes, à l'écrit ou à la voix. Je vous réponds avec une première lecture du problème.</p>
+    <a class="cta" href="#" data-brief>Décrivez votre besoin</a>
+  </div></section></main>${footer()}`;
+const mixRecit = () => { const R=C.recit; return `${navBar('recit')}<main>
+  <header class="r-head wrap"><p class="surt c">expériences et réalisations</p>
+    <h1 class="r-title">${R.titre}</h1><p class="r-chapo">${R.chapo}</p>
+    <p class="r-meta">${R.date.toLowerCase()} · ${R.lecture}</p></header>
+  <div class="wrap r-grid">
+    <dl class="margin">${R.fiche.map(f=>`<div><dt>${f[0].toLowerCase()}</dt><dd>${f[1]}</dd></div>`).join("")}</dl>
+    <article>
+      <div class="r-sum"><div class="b"><h4>friction</h4><p>${R.friction}</p></div><span class="arr">→</span><div class="b"><h4>solution</h4><p>${R.solution}</p></div><span class="arr">→</span><div class="b"><h4>résultat</h4><p>${R.resultat}</p></div></div>
+      <div class="r-body">
+        ${R.sections.map((s,i)=>`<h2><span>0${i+1}</span>${s}</h2>${body(i===1?2:1)}${i===2?'<div class="fig">capture : calendrier des messes · schéma des équipes</div>':''}`).join("")}
+      </div>
+      <div class="r-end"><h3>Un point de friction qui ressemble au vôtre ?</h3><a class="cta" href="#" data-brief>Décrivez votre besoin</a></div>
+      <div class="r-next">${C.autres.map(a=>`<a href="#"><small>${a[0].toLowerCase()}</small><b>${a[1]}</b></a>`).join("")}</div>
+    </article><div></div>
+  </div></main>${footer()}`; };
+const D = {name: "B × C · Plex Sans", cls: "vC vD", accueil: mixAccueil, recit: mixRecit};
+const E = {name: "B × C · Space Grotesk", cls: "vC vD vE", accueil: mixAccueil, recit: mixRecit};
+
+// ---------- bascule ----------
+const V = {A, B, C: Cv, D, E}; const keys = Object.keys(V);
+function state(){ const p=new URLSearchParams(location.search); return {v: keys.includes(p.get('variant'))?p.get('variant'):'A', page: p.get('page')==='recit'?'recit':'accueil'}; }
+function go(v, page){ const p=new URLSearchParams(location.search); p.set('variant',v); p.set('page',page); history.replaceState(null,'','?'+p); render(); }
+function render(){
+  const s = state();
+  document.body.className = V[s.v].cls || 'v'+s.v;
+  document.getElementById('app').innerHTML = V[s.v][s.page]();
+  document.getElementById('lbl').textContent = `${s.v} · ${V[s.v].name} — ${s.page==='recit'?'récit':'accueil'}`;
+  document.querySelectorAll('#proto [data-page]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.page===s.page));
+  window.scrollTo(0,0);
+}
+const cycle = d => { const s=state(); go(keys[(keys.indexOf(s.v)+d+keys.length)%keys.length], s.page); };
+document.getElementById('prev').onclick = () => cycle(-1);
+document.getElementById('next').onclick = () => cycle(1);
+document.querySelectorAll('#proto [data-page]').forEach(b => b.onclick = () => go(state().v, b.dataset.page));
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input,textarea,[contenteditable]')) return;
+  if (e.key==='ArrowLeft') cycle(-1); if (e.key==='ArrowRight') cycle(1);
+  if (e.key==='Escape') closeBrief();
+});
+const modal = document.getElementById('brief');
+const closeBrief = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); };
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g){ e.preventDefault(); go(state().v, g.dataset.go); return; }
+  if (e.target.closest('[data-brief]')){ e.preventDefault(); modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); document.getElementById('brief-txt').focus(); return; }
+  if (e.target.closest('[data-close]') || e.target===modal) closeBrief();
+});
+render();
+</script>
+</body>
+</html>
