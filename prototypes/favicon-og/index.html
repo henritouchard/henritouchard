@@ -68,8 +68,12 @@ svg{display:block}
 .og .fil{position:relative;height:6px;border-radius:3px;background:var(--coral)}
 .og .fil::after{content:"";position:absolute;right:-30px;top:-6px;width:18px;height:18px;border-radius:50%;background:var(--coral)}
 .glow{background:radial-gradient(ellipse 80% 110% at 100% 0%,#1C2840 0%,#0E1626 65%)}
-.safe-sq{position:absolute;top:0;bottom:0;border-left:2px dashed #FFE58A;border-right:2px dashed #FFE58A;pointer-events:none}
-.safe-sq span{position:absolute;left:6px;top:6px;font:500 12px/1 var(--f-m);background:#FFE58A;color:#3A2E00;padding:4px 6px;border-radius:3px}
+.safe-sq{position:absolute;top:0;bottom:0;pointer-events:none;--c:#FFE58A;--l:22px;
+  background:linear-gradient(var(--c),var(--c)) 0 0/2px var(--l) no-repeat,linear-gradient(var(--c),var(--c)) 0 0/var(--l) 2px no-repeat,
+  linear-gradient(var(--c),var(--c)) 100% 0/2px var(--l) no-repeat,linear-gradient(var(--c),var(--c)) 100% 0/var(--l) 2px no-repeat,
+  linear-gradient(var(--c),var(--c)) 0 100%/2px var(--l) no-repeat,linear-gradient(var(--c),var(--c)) 0 100%/var(--l) 2px no-repeat,
+  linear-gradient(var(--c),var(--c)) 100% 100%/2px var(--l) no-repeat,linear-gradient(var(--c),var(--c)) 100% 100%/var(--l) 2px no-repeat}
+.safe-sq span{position:absolute;left:28px;top:6px;font:500 12px/1 var(--f-m);background:#FFE58A;color:#3A2E00;padding:4px 6px;border-radius:3px}
 
 /* A — Bande encre : tout centré sur l'encre */
 .og.A{color:#fff}
@@ -91,14 +95,15 @@ svg{display:block}
 .og.C{color:#fff}
 .og.C .side,.og.Cc .side{position:absolute;top:0;bottom:0;width:285px;overflow:hidden}
 .og.C .side.l,.og.Cc .side.l{left:0}.og.C .side.r,.og.Cc .side.r{right:0}
-.og.C .side svg,.og.Cc .side svg{position:absolute;top:120px}
-.og.C .stack,.og.Cc .stack{justify-content:flex-start;padding-top:120px}
+.og.C .side svg,.og.Cc .side svg{position:absolute;top:104px}
+.og.C .stack,.og.Cc .stack{justify-content:flex-start;padding-top:104px}
 .og.C .stack svg,.og.Cc .stack svg{margin-bottom:20px}
 .og.C h3,.og.Cc h3{font-size:76px}
 .og .sub{font:500 34px/1.1 var(--f-d);letter-spacing:-.01em;margin-top:14px}
-.og .comp{display:flex;align-items:center;justify-content:center;gap:14px;font:400 21px/1.2 var(--f-b);margin-top:24px;white-space:nowrap}
+.og .comp{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;font:400 21px/1.2 var(--f-b);margin-top:22px;max-width:560px;white-space:nowrap}
+.og .comp .br{flex-basis:100%;height:0}
 .og .comp i{width:8px;height:8px;border-radius:50%;background:var(--coral);flex:none}
-.og .who{font:400 20px/1 var(--f-m);margin-top:26px;letter-spacing:.02em}
+.og .who{font:400 20px/1 var(--f-m);margin-top:22px;letter-spacing:.02em}
 .og.C .sub{color:#fff}.og.C .comp{color:var(--gris)}.og.C .who{color:var(--muted)}
 .og.Cc .sub{color:var(--nuit)}.og.Cc .comp{color:#3A4352}.og.Cc .who{color:#5A616B}
 
@@ -220,7 +225,7 @@ const tabRow = () => `<div class="tab"><i class="ghost" style="background:#4285F
 const SITE = {intitule:'Optimisation<br>opérationnelle', sub:'&amp; outils sur mesure',
   comp:['Automatisation des processus','Logiciel sur mesure','Intégration de l\'IA'], url:'henritouchard.fr'};
 const fullText = () => `<h3>${SITE.intitule}</h3><div class="sub">${SITE.sub}</div>
-  <div class="comp">${SITE.comp.map((c,i)=>(i?'<i></i>':'')+`<span>${c}</span>`).join('')}</div><div class="who">Henri Touchard · ${SITE.url}</div>`;
+  <div class="comp"><span>${SITE.comp[0]}</span><i></i><span>${SITE.comp[1]}</span><span class="br"></span><span>${SITE.comp[2]}</span></div><div class="who">Henri Touchard · ${SITE.url}</div>`;
 // la page partagée ne change que le titre affiché sous l'image (og:title), pas l'image
 const PAGES = {
   accueil:{nom:'Accueil', titre:'Automatisation des processus & logiciel sur mesure – Henri Touchard'},
@@ -266,7 +271,7 @@ function ogView(key, pk){
   el.innerHTML = `
   <h1 class="ph">Image Open Graph du site — ${key} · ${v.nom}</h1>
   <p class="lead">${v.note} <strong>Une seule image pour toutes les pages</strong> ; seul le titre affiché sous l'image change selon la page partagée (menu en bas : ${pg.nom}).</p>
-  <h2 class="sec">1200 × 630, carré central en pointillés</h2>
+  <h2 class="sec">1200 × 630 (équerres jaunes = carré gardé par les messageries, hors image)</h2>
   ${scaled(h, big, 0, true)}
   <h2 class="sec">En situation (lien vers : ${pg.nom})</h2>
   <div class="grid">
