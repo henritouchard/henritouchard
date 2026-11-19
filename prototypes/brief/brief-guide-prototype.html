@@ -120,7 +120,7 @@ const ORIENT=[
 const TAILLES=['Seul·e','2 à 10','11 à 50','51 à 250','Plus de 250'];
 const variant=()=>new URLSearchParams(location.search).get('variant')||'A';
 let S,LOG,opt={timingA:'valider',minPhrases:true};
-function reset(){S={open:false,step:0,revealed:0,contact:{nom:'',societe:'',email:'',tel:'',pref:''},taille:'',societeTxt:'',orient:'',besoinTxt:'',reform:{status:'aucune',s:{},modifiee:false},dictee:false,contactSent:false,sent:false,rappel:null,closing:false,ecoute:null};LOG={events:[],mails:[],mistral:[]};}
+function reset(){S={open:false,step:0,revealed:0,contact:{nom:'',societe:'',email:'',tel:'',pref:'email',prefManuelle:false},taille:'',societeTxt:'',orient:'',besoinTxt:'',reform:{status:'aucune',s:{},modifiee:false},dictee:false,contactSent:false,sent:false,rappel:null,closing:false,ecoute:null};LOG={events:[],mails:[],mistral:[]};}
 reset();
 const $=s=>document.querySelector(s);
 const esc=t=>(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -147,7 +147,7 @@ function blocContact(final){
   <div class="row"><div><label>E-mail *</label><input type="email" value="${esc(c.email)}" oninput="majPref('email',this.value)"></div>
   <div><label>Téléphone <span class="opt">(facultatif)</span></label><input type="tel" value="${esc(c.tel)}" oninput="majPref('tel',this.value)"></div></div>
   <label>Je préfère être recontacté·e</label>
-  <div class="chips">${['email','telephone'].map(p=>`<button class="chip ${c.pref===p?'on':''}" ${(p==='email'?c.email:c.tel).trim()?'':'disabled style="opacity:.4;cursor:not-allowed"'} onclick="S.contact.pref='${p}';render()">par ${p==='email'?'e-mail':'téléphone'}</button>`).join('')}</div>
+  <div class="chips">${['email','telephone'].map(p=>`<button class="chip ${c.pref===p?'on':''}" ${p==='telephone'&&!c.tel.trim()?'disabled style="opacity:.4;cursor:not-allowed"':''} onclick="S.contact.pref='${p}';S.contact.prefManuelle=true;render()">par ${p==='email'?'e-mail':'téléphone'}</button>`).join('')}</div>
   <p class="encart">Vos coordonnées servent uniquement à vous répondre. <a href="#" class="lien">Confidentialité</a></p>`;
 }
 function blocSociete(){
@@ -239,10 +239,12 @@ function quitterA(){
   S.closing=false;S.open=false;$('#voile').classList.remove('open');render();
 }
 function majPref(champ,v){
-  const c=S.contact,avant=c[champ].trim(),k=champ==='email'?'email':'telephone',autre=champ==='email'?'telephone':'email';
+  const c=S.contact,avant=c[champ].trim();
   c[champ]=v;
-  if(!avant&&v.trim())c.pref=k;                       // champ qui vient d'être rempli : coché par défaut
-  if(avant&&!v.trim()&&c.pref===k)c.pref=(champ==='email'?c.tel:c.email).trim()?autre:'';
+  if(champ==='tel'){
+    if(!avant&&v.trim()&&!c.prefManuelle)c.pref='telephone';   // téléphone rempli, choix pas encore fait par la personne
+    if(avant&&!v.trim()&&c.pref==='telephone')c.pref='email';  // téléphone vidé
+  }
   render();
 }
 function upd(){renderEtat();const b=document.getElementById('suiv');if(b)b.disabled=!curOk();}
