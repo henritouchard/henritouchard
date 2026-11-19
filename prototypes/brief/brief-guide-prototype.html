@@ -120,7 +120,7 @@ const ORIENT=[
 const TAILLES=['Seul·e','2 à 10','11 à 50','51 à 250','Plus de 250'];
 const variant=()=>new URLSearchParams(location.search).get('variant')||'A';
 let S,LOG,opt={timingA:'valider',minPhrases:true};
-function reset(){S={open:false,step:0,revealed:0,contact:{nom:'',societe:'',email:'',tel:'',pref:'email'},taille:'',societeTxt:'',orient:'',besoinTxt:'',reform:{status:'aucune',s:{},modifiee:false},dictee:false,contactSent:false,sent:false,rappel:null,closing:false,ecoute:null};LOG={events:[],mails:[],mistral:[]};}
+function reset(){S={open:false,step:0,revealed:0,contact:{nom:'',societe:'',email:'',tel:'',pref:''},taille:'',societeTxt:'',orient:'',besoinTxt:'',reform:{status:'aucune',s:{},modifiee:false},dictee:false,contactSent:false,sent:false,rappel:null,closing:false,ecoute:null};LOG={events:[],mails:[],mistral:[]};}
 reset();
 const $=s=>document.querySelector(s);
 const esc=t=>(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -144,10 +144,10 @@ function blocContact(final){
   <p class="aide">${final?'Pour que je puisse vous répondre.':'Ces coordonnées me permettent de vous recontacter, y compris si vous ne terminez pas votre demande. (texte à reformuler)'}</p>
   <div class="row"><div><label>Nom et prénom *</label><input type="text" value="${esc(c.nom)}" oninput="S.contact.nom=this.value;upd()"></div>
   <div><label>Société <span class="opt">${final?'(facultatif)':'*'}</span></label><input type="text" value="${esc(c.societe)}" oninput="S.contact.societe=this.value;upd()"></div></div>
-  <div class="row"><div><label>E-mail *</label><input type="email" value="${esc(c.email)}" oninput="S.contact.email=this.value;upd()"></div>
-  <div><label>Téléphone <span class="opt">(facultatif)</span></label><input type="tel" value="${esc(c.tel)}" oninput="S.contact.tel=this.value;upd()"></div></div>
+  <div class="row"><div><label>E-mail *</label><input type="email" value="${esc(c.email)}" oninput="majPref('email',this.value)"></div>
+  <div><label>Téléphone <span class="opt">(facultatif)</span></label><input type="tel" value="${esc(c.tel)}" oninput="majPref('tel',this.value)"></div></div>
   <label>Je préfère être recontacté·e</label>
-  <div class="chips">${['email','telephone'].map(p=>`<button class="chip ${c.pref===p?'on':''}" onclick="S.contact.pref='${p}';render()">par ${p==='email'?'e-mail':'téléphone'}</button>`).join('')}</div>
+  <div class="chips">${['email','telephone'].map(p=>`<button class="chip ${c.pref===p?'on':''}" ${(p==='email'?c.email:c.tel).trim()?'':'disabled style="opacity:.4;cursor:not-allowed"'} onclick="S.contact.pref='${p}';render()">par ${p==='email'?'e-mail':'téléphone'}</button>`).join('')}</div>
   <p class="encart">Vos coordonnées servent uniquement à vous répondre. <a href="#" class="lien">Confidentialité</a></p>`;
 }
 function blocSociete(){
@@ -237,6 +237,13 @@ function quitterA(){
   ev('brief_quitte',{recontact:!refus,brouillon_joint:joindre});
   if(refus||joindre)mail(`→ Henri · objet « Brief inachevé — ${S.contact.societe} »\n${refus?'⚠ Ne souhaite pas être recontacté·e.':'Rappel accepté.'}\n${joindre?'Brouillon joint :\nSOCIÉTÉ : '+(S.societeTxt||'—')+'\nBESOIN : '+(S.besoinTxt||'—'):'(brouillon non joint)'}`);
   S.closing=false;S.open=false;$('#voile').classList.remove('open');render();
+}
+function majPref(champ,v){
+  const c=S.contact,avant=c[champ].trim(),k=champ==='email'?'email':'telephone',autre=champ==='email'?'telephone':'email';
+  c[champ]=v;
+  if(!avant&&v.trim())c.pref=k;                       // champ qui vient d'être rempli : coché par défaut
+  if(avant&&!v.trim()&&c.pref===k)c.pref=(champ==='email'?c.tel:c.email).trim()?autre:'';
+  render();
 }
 function upd(){renderEtat();const b=document.getElementById('suiv');if(b)b.disabled=!curOk();}
 function curOk(){const v=variant();if(v==='C')return okBloc(CBLOCS[S.revealed]);return okBloc(STEPS[v][S.step]);}
