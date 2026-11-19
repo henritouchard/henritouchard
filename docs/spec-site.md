@@ -70,7 +70,7 @@ Ton : première personne, direct, sans jargon. Écartés : frise, CV en PDF, mur
 
 - Lien vers les mentions légales.
 - Lien **GitHub discret** (peu parlant pour un dirigeant de PME). **Pas de lien visible vers LinkedIn ni Malt** : ils restent dans le `sameAs` de `Person`. (Réponse d'Henri du 2026-11-19 sur [Rassembler la spec du site](https://github.com/henritouchard/henritouchard/issues/31), qui tranche entre [Quel référencement technique…](https://github.com/henritouchard/henritouchard/issues/14) et [Que raconte l'« À propos » ?](https://github.com/henritouchard/henritouchard/issues/16))
-- **Fiche contact** : lien « Ajouter à mes contacts », aussi présent sur À propos, affiché **seulement sur appareil tactile** (détecté par le type de pointeur, pas par la largeur). La vCard est **fabriquée au clic sur l'appareil**, à partir d'un numéro découpé en morceaux : le numéro n'apparaît jamais en clair, ni dans le code des pages ni dans un `.vcf` sur le serveur. Six champs : Henri Touchard, « Optimisation opérationnelle », téléphone pro, e-mail pro, henritouchard.fr, LinkedIn ; portrait en photo (jamais la tuile du logo). Ni captcha ni piège à robots, aucune donnée collectée. ([Comment ajouter le contact d'Henri…](https://github.com/henritouchard/henritouchard/issues/30))
+- **Fiche contact** : lien « Ajouter à mes contacts », aussi présent sur À propos, affiché **seulement sur appareil tactile** (détecté par le type de pointeur, pas par la largeur). La vCard est **fabriquée au clic sur l'appareil**, à partir d'un numéro découpé en morceaux : le numéro n'apparaît jamais en clair, ni dans le code des pages (mentions légales comprises, où il est assemblé dans le navigateur de la même façon) ni dans un `.vcf` sur le serveur. Six champs : Henri Touchard, « Optimisation opérationnelle », téléphone pro, e-mail pro, henritouchard.fr, LinkedIn ; portrait en photo (jamais la tuile du logo). Ni captcha ni piège à robots, aucune donnée collectée. ([Comment ajouter le contact d'Henri…](https://github.com/henritouchard/henritouchard/issues/30))
 
 ## 3. Brief et demande de rappel
 
@@ -104,7 +104,7 @@ Barre de progression en haut de la modale ; lien « ← Retour » à partir de l
 ([Comment découper le brief…](https://github.com/henritouchard/henritouchard/issues/32))
 
 - Les coordonnées partent chez Henri **dès le clic sur « Valider »** (e-mail « Nouveau contact »). Si la modale est fermée à l'étape 1, avant « Valider », rien ne part.
-- Si le prospect ferme la modale après « Valider » sans avoir envoyé son brief, il voit : « Pas le temps, ou pas l'envie, de compléter votre demande ? Je peux vous rappeler sous 48 h ouvrées pour en parler. Votre brouillon reste enregistré sur cet appareil si vous souhaitez le reprendre plus tard. » Suivent la case « Joindre ce que j'ai déjà écrit » (cochée), la case « Je ne souhaite pas être recontacté·e » (non cochée), et les boutons « Reprendre ma demande » et « Fermer ».
+- Si le prospect ferme la modale après « Valider » sans avoir envoyé son brief, il voit : « Pas le temps, ou pas l'envie, de compléter votre demande ? Je peux vous rappeler sous 48 h ouvrées pour en parler. Votre brouillon reste enregistré sur cet appareil si vous souhaitez le reprendre plus tard. » Suivent la case « Joindre ce que j'ai déjà écrit » (cochée ; affichée seulement si le prospect a déjà écrit un des deux textes), la case « Je ne souhaite pas être recontacté·e » (non cochée), et les boutons « Reprendre ma demande » et « Fermer ».
 - S'il refuse d'être recontacté ou joint son brouillon, Henri reçoit l'e-mail « Brief interrompu ».
 - Si l'onglet est fermé sans fermer la modale, rien de plus ne part : Henri a le contact, mais ni le brouillon ni un éventuel refus.
 - Le brouillon reste dans le `localStorage` : le prospect peut reprendre sa demande plus tard.
@@ -172,7 +172,7 @@ Tous envoyés par **Brevo**. Pas de CRM : la boîte mail suffit, avec un libell�
 
 Minimum légal, sans juriste ni démarche CNIL supplémentaire. ([Quelles mentions légales et quelle information RGPD sur le site ?](https://github.com/henritouchard/henritouchard/issues/18), à partir de [Quelles obligations légales…](https://github.com/henritouchard/henritouchard/issues/13))
 
-- **Mentions légales** (`/mentions-legales/`) : « Henri Touchard EI » (mention « EI » obligatoire) ; adresse, téléphone, e-mail, SIREN ; directeur de la publication : Henri Touchard ; hébergeur Hostinger (adresse, téléphone), VPS en France ; pas de numéro de TVA (franchise en base) ; « offre réservée aux professionnels ».
+- **Mentions légales** (`/mentions-legales/`) : « Henri Touchard EI » (mention « EI » obligatoire) ; adresse, téléphone (assemblé dans le navigateur, jamais en clair dans le code), e-mail, SIREN ; directeur de la publication : Henri Touchard ; hébergeur Hostinger (adresse, téléphone), VPS en France ; pas de numéro de TVA (franchise en base) ; « offre réservée aux professionnels ».
 - **Confidentialité** (section `#confidentialite` de la même page) :
   - traitements : coordonnées, brief, brief interrompu et demande de rappel (e-mails de lead), dictée et reformulation, journaux du serveur, mesure d'audience, brouillon en `localStorage` (effacé à l'envoi) ;
   - base légale : mesures précontractuelles ; conservation des leads : 3 ans après le dernier contact ; registre des traitements tenu ;
