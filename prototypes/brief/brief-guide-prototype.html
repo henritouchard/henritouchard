@@ -68,6 +68,8 @@ textarea{min-height:110px;resize:vertical}
 .reform h4{font:500 12px "IBM Plex Mono";color:var(--corail-f);margin:10px 0 2px;text-transform:uppercase}
 .reform h4:first-child{margin-top:0}
 .reform p{margin:0}
+.reform textarea{border:1px solid transparent;background:transparent;padding:2px 4px;margin:0 -4px;min-height:0;resize:none;overflow:hidden;font-size:15px;line-height:1.5;border-radius:4px}
+.reform textarea:hover{border-color:var(--filet)}.reform textarea:focus{border-color:var(--filet2);background:#fff;outline:none}
 .recap{border-left:3px solid var(--filet2);padding:4px 12px;margin:8px 0;color:var(--txt2);font-size:14px;white-space:pre-wrap}
 .bloc{border-top:1px solid var(--filet);padding-top:18px;margin-top:18px}
 .bloc:first-child{border:0;margin:0;padding:0}
@@ -118,7 +120,7 @@ const ORIENT=[
 const TAILLES=['Seul·e','2 à 10','11 à 50','51 à 250','Plus de 250'];
 const variant=()=>new URLSearchParams(location.search).get('variant')||'A';
 let S,LOG,opt={timingA:'valider',minPhrases:true};
-function reset(){S={open:false,step:0,revealed:0,contact:{nom:'',societe:'',email:'',tel:'',pref:'email'},taille:'',societeTxt:'',orient:'',besoinTxt:'',reform:{status:'aucune',text:''},dictee:false,contactSent:false,sent:false,rappel:null,closing:false,ecoute:null};LOG={events:[],mails:[],mistral:[]};}
+function reset(){S={open:false,step:0,revealed:0,contact:{nom:'',societe:'',email:'',tel:'',pref:'email'},taille:'',societeTxt:'',orient:'',besoinTxt:'',reform:{status:'aucune',s:{},modifiee:false},dictee:false,contactSent:false,sent:false,rappel:null,closing:false,ecoute:null};LOG={events:[],mails:[],mistral:[]};}
 reset();
 const $=s=>document.querySelector(s);
 const esc=t=>(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -129,6 +131,7 @@ function brouillonVide(){return !(S.societeTxt||S.besoinTxt||S.contact.nom||S.co
 function ouvrir(){S.open=true;S.closing=false;$('#voile').classList.add('open');ev('brief_ouvert');stepEvent();render();}
 function fermer(){
   if(S.sent||brouillonVide()||S.closing){S.open=false;S.closing=false;$('#voile').classList.remove('open');render();return;}
+  if(variant()==='A'&&S.step===0){S.open=false;$('#voile').classList.remove('open');render();return;}
   S.closing=true;render();
 }
 function stepEvent(){const v=variant();if(v==='C')ev('etape_atteinte',{bloc:S.revealed+1});else ev('etape_atteinte',{etape:S.step+1,nom:STEPS[v][S.step]});}
@@ -138,7 +141,7 @@ function dicteeBtn(champ){return `<div class="outils"><button class="btn btn-gho
 function blocContact(final){
   const c=S.contact;
   return `<h2>${TITRES.contact}</h2>
-  <p class="aide">${final?'Pour que je puisse vous répondre.':'Pour savoir à qui je parle et vous recontacter. Rien n\'est envoyé avant que vous cliquiez.'}</p>
+  <p class="aide">${final?'Pour que je puisse vous répondre.':'Ces coordonnées me permettent de vous recontacter, y compris si vous ne terminez pas votre demande. (texte à reformuler)'}</p>
   <div class="row"><div><label>Nom et prénom *</label><input type="text" value="${esc(c.nom)}" oninput="S.contact.nom=this.value;upd()"></div>
   <div><label>Société <span class="opt">${final?'(facultatif)':'*'}</span></label><input type="text" value="${esc(c.societe)}" oninput="S.contact.societe=this.value;upd()"></div></div>
   <div class="row"><div><label>E-mail *</label><input type="email" value="${esc(c.email)}" oninput="S.contact.email=this.value;upd()"></div>
@@ -168,10 +171,9 @@ function blocPourquoi(){
 function blocRelire(){
   const r=S.reform;
   let h=`<h2>${TITRES.relire}</h2><p class="aide">Voici ce que vous m'avez écrit. Vous pouvez l'envoyer tel quel, ou me laisser le reformuler.</p>`;
-  if(r.status==='proposee'){
-    h+=`<div class="reform">${r.text}</div><div class="actions" style="margin-top:10px"><button class="btn btn-ghost" onclick="reformChoix(false)">Garder mon texte</button><button class="btn btn-encre" onclick="reformChoix(true)">C'est ça, utiliser cette version</button></div>`;
-  }else if(r.status==='acceptee'){
-    h+=`<div class="reform">${r.text}</div><p class="encart">Version reformulée retenue. <button class="lien" onclick="S.reform.status='refusee';render()">Revenir à mon texte</button></p>`;
+  if(r.status==='utilisee'){
+    const SEC=[['contexte','Contexte'],['coince','Ce qui coince'],['souhait','Ce que vous souhaitez'],['preciser','À préciser']];
+    h+=`<p class="encart">Ma proposition de reformulation : cliquez sur un passage pour le corriger ou le compléter, c'est cette version qui me sera envoyée.</p><div class="reform">${SEC.map(([k,l])=>`<h4>${l}</h4><textarea rows="1" oninput="S.reform.s.${k}=this.value;grow(this);marqueModif()">${esc(r.s[k])}</textarea>`).join('')}</div><p class="encart"><button class="lien" onclick="S.reform.status='refusee';ev('reformulation_refusee');render()">Revenir à mon texte</button></p>`;
   }else{
     h+=`<div class="mono" style="font-size:12px;color:var(--txt3)">VOTRE SOCIÉTÉ</div><div class="recap">${esc(S.societeTxt)||'<i>(vide)</i>'}${S.taille?'\nTaille : '+S.taille:''}</div>
     <div class="mono" style="font-size:12px;color:var(--txt3)">POURQUOI</div><div class="recap">${S.orient?'['+ORIENT.find(o=>o[0]===S.orient)[1]+']\n':''}${esc(S.besoinTxt)||'<i>(vide)</i>'}</div>
@@ -185,7 +187,6 @@ function okBloc(b){
   if(b==='contact')return c.nom.trim()&&/.+@.+\..+/.test(c.email)&&(variant()!=='A'||c.societe.trim());
   if(b==='societe')return S.societeTxt.trim().length>=(opt.minPhrases?15:1);
   if(b==='pourquoi')return S.besoinTxt.trim().length>=(opt.minPhrases?30:1);
-  if(b==='relire')return S.reform.status!=='proposee';
   return true;
 }
 /* ---------- actions ---------- */
@@ -199,18 +200,20 @@ function suivant(){
 function envoyer(){
   S.sent=true;ev('brief_envoye');
   const o=S.orient?ORIENT.find(x=>x[0]===S.orient)[1]:'(non dit)';
-  const corps=S.reform.status==='acceptee'?'[reformulation acceptée]\n'+S.reform.text.replace(/<[^>]+>/g,'\n').replace(/\n+/g,'\n').trim()+'\n\n— Textes d\'origine —\n':'';
-  mail(`→ Henri · objet « Nouveau lead — ${S.contact.societe||S.contact.nom} — ${S.orient==='cadre'?'besoin cadré':'à explorer'} »\nReply-To: ${S.contact.email}\n${S.contact.nom} · ${S.contact.tel||'(pas de tél.)'} · préfère ${S.contact.pref}\nOrientation : ${o}\n${corps}SOCIÉTÉ${S.taille?' ('+S.taille+')':''} : ${S.societeTxt}\nBESOIN : ${S.besoinTxt}\nAides : dictée ${S.dictee?'oui':'non'}, reformulation ${S.reform.status}\nOrigine : ?src=linkedin · page /`);
+  const rs=S.reform.s;if(S.reform.status==='utilisee')ev('reformulation_utilisee',{modifiee:S.reform.modifiee});
+  const corps=S.reform.status==='utilisee'?`[reformulation utilisée${S.reform.modifiee?', modifiée par le prospect':''}]\nCONTEXTE : ${rs.contexte}\nCE QUI COINCE : ${rs.coince}\nCE QUE VOUS SOUHAITEZ : ${rs.souhait}\nÀ PRÉCISER : ${rs.preciser}\n\n— Textes d'origine —\n`:'';
+  mail(`→ Henri · objet « ${S.contactSent?'Brief complété':'Nouveau lead'} — ${S.contact.societe||S.contact.nom} — ${S.orient==='cadre'?'besoin cadré':'à explorer'} »\nReply-To: ${S.contact.email}\n${S.contact.nom} · ${S.contact.tel||'(pas de tél.)'} · préfère ${S.contact.pref}\nOrientation : ${o}\n${corps}SOCIÉTÉ${S.taille?' ('+S.taille+')':''} : ${S.societeTxt}\nBESOIN : ${S.besoinTxt}\nAides : dictée ${S.dictee?'oui':'non'}, reformulation ${S.reform.status}\nOrigine : ?src=linkedin · page /`);
   mail(`→ ${S.contact.email} · accusé de réception (sans le texte du brief)\n« Merci, je vous réponds sous 48 h ouvrées. »`);
   render();
 }
 function reformuler(){
   ev('reformulation_demandee');LOG.mistral.push('reformulation : société + besoin ('+(S.societeTxt.length+S.besoinTxt.length)+' car.)');
   const soc=S.societeTxt||'—',bes=S.besoinTxt||'—';
-  S.reform={status:'proposee',text:`<h4>Contexte</h4><p>${esc(soc)}${S.taille?' ('+S.taille+' personnes)':''}</p><h4>Ce qui coince</h4><p>${esc(bes.split(/[.!?]/)[0])}.</p><h4>Ce que vous souhaitez</h4><p>${S.orient==='flou'?'Un regard extérieur pour repérer où vous perdez du temps.':'Un outil qui supprime cette tâche (simulation).'}</p><h4>À préciser</h4><p>Volumes concernés, outils déjà en place, échéance.</p>`};
+  S.reform={status:'utilisee',modifiee:false,s:{contexte:soc+(S.taille?' ('+S.taille+' personnes)':''),coince:bes.split(/[.!?]/)[0]+'.',souhait:S.orient==='flou'?'Un regard extérieur pour repérer où vous perdez du temps.':'Un outil qui supprime cette tâche (simulation).',preciser:'Volumes concernés, outils déjà en place, échéance.'}};
   render();
 }
-function reformChoix(ok){S.reform.status=ok?'acceptee':'refusee';ev(ok?'reformulation_acceptee':'reformulation_refusee');render();}
+function grow(t){t.style.height='auto';t.style.height=t.scrollHeight+'px';}
+function marqueModif(){if(!S.reform.modifiee){S.reform.modifiee=true;ev('reformulation_modifiee');}upd();}
 const PHRASES={societeTxt:'Nous sommes une PME de maintenance de chauffage, une vingtaine de techniciens sur la route et trois personnes au bureau. ',besoinTxt:'Les techniciens remplissent des bons d\'intervention papier, et le soir on ressaisit tout dans le logiciel de facturation. On perd au moins une heure par jour. '};
 function dicter(champ){
   if(!S.dictee){S.dictee=true;ev('dictee_utilisee');}
@@ -228,6 +231,12 @@ function envoyerPartiel(){
   ev('brief_envoye',{partiel:true});
   mail(`→ Henri · objet « Brief (incomplet) — ${S.contact.societe} »\nSOCIÉTÉ : ${S.societeTxt||'—'}\nBESOIN : ${S.besoinTxt||'—'}`);
   S.sent=true;render();
+}
+function quitterA(){
+  const refus=$('#refus').checked,j=$('#joindre'),joindre=!!(j&&j.checked);
+  ev('brief_quitte',{recontact:!refus,brouillon_joint:joindre});
+  if(refus||joindre)mail(`→ Henri · objet « Brief inachevé — ${S.contact.societe} »\n${refus?'⚠ Ne souhaite pas être recontacté·e.':'Rappel accepté.'}\n${joindre?'Brouillon joint :\nSOCIÉTÉ : '+(S.societeTxt||'—')+'\nBESOIN : '+(S.besoinTxt||'—'):'(brouillon non joint)'}`);
+  S.closing=false;S.open=false;$('#voile').classList.remove('open');render();
 }
 function upd(){renderEtat();const b=document.getElementById('suiv');if(b)b.disabled=!curOk();}
 function curOk(){const v=variant();if(v==='C')return okBloc(CBLOCS[S.revealed]);return okBloc(STEPS[v][S.step]);}
@@ -275,15 +284,17 @@ function render(){
   const foc=document.activeElement,tag=foc&&foc.tagName,sel=tag==='TEXTAREA'||tag==='INPUT'?[...m.querySelectorAll('input,textarea')].indexOf(foc):-1;
   m.innerHTML=h;
   if(sel>=0){const el=m.querySelectorAll('input,textarea')[sel];if(el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n)}catch(e){}}}
+  m.querySelectorAll('.reform textarea').forEach(grow);
   renderEtat();
 }
 function closingHtml(){
   const v=variant();
   if(v==='A'&&S.contactSent){
-    return `<h2>Vous partez déjà ?</h2><p class="aide">J'ai bien vos coordonnées : je vous recontacte ${S.contact.pref==='telephone'?'par téléphone':'par e-mail'} sous 48 h ouvrées, même si vous n'allez pas plus loin.</p>
-    ${(S.societeTxt||S.besoinTxt)?`<p class="aide">Voulez-vous m'envoyer aussi ce que vous avez déjà écrit ?</p>`:''}
-    <div class="note-proto">Question ouverte : la demande de rappel n'a plus d'objet ici (Henri a déjà nom + e-mail). Est-ce ce comportement qu'on veut ?</div>
-    <div class="actions"><button class="btn btn-ghost" onclick="S.closing=false;render()">Continuer mon brief</button><span>${(S.societeTxt||S.besoinTxt)?'<button class="btn btn-ghost" onclick="envoyerPartiel()">Envoyer ce que j\'ai écrit</button> ':''}<button class="btn btn-encre" onclick="fermer()">Fermer</button></span></div>`;
+    const txt=S.societeTxt||S.besoinTxt;
+    return `<h2>Pas le temps, ou pas l'envie, de compléter votre demande ?</h2><p class="aide">Je peux vous rappeler sous 48 h ouvrées pour en parler. Votre brouillon reste enregistré sur cet appareil si vous souhaitez le reprendre plus tard.</p>
+    ${txt?'<label style="display:flex;gap:8px;font-weight:400"><input type="checkbox" id="joindre" checked> Joindre ce que j\'ai déjà écrit</label>':''}
+    <label style="display:flex;gap:8px;font-weight:400"><input type="checkbox" id="refus"> Je ne souhaite pas être recontacté·e</label>
+    <div class="actions"><button class="btn btn-ghost" onclick="S.closing=false;render()">Reprendre ma demande</button><button class="btn btn-encre" onclick="quitterA()">Fermer</button></div>`;
   }
   return `<h2>Pas facile à formuler ?</h2><p class="aide">Laissez simplement votre nom et votre numéro, je vous rappelle pour en parler.</p>
   <div class="row"><div><label>Nom</label><input type="text" value="${esc(S.contact.nom)}" oninput="S.contact.nom=this.value"></div><div><label>Téléphone</label><input type="tel" value="${esc(S.contact.tel)}" oninput="S.contact.tel=this.value"></div></div>
@@ -295,7 +306,7 @@ function renderEtat(){
   const draft={etape:v==='C'?S.revealed+1:S.step+1,contact:S.contact,taille:S.taille,societe:S.societeTxt,orientation:S.orient,besoin:S.besoinTxt,reformulation:S.reform.status,coordonneesDejaEnvoyees:S.contactSent};
   $('#etat').innerHTML=`<div style="color:#fff;font-weight:600">ÉTAT — variante ${v}</div>
   <h5>Réglages du prototype</h5>
-  ${v==='A'?`<label><input type="radio" name="t" ${opt.timingA==='valider'?'checked':''} onchange="opt.timingA='valider'"> coordonnées envoyées au clic « Valider » (étape 1)</label><label><input type="radio" name="t" ${opt.timingA==='fin'?'checked':''} onchange="opt.timingA='fin'"> coordonnées envoyées seulement à la fin</label>`:''}
+  ${v==='A'?[['valider','coordonnées envoyées au clic « Valider »'],['fin','coordonnées envoyées seulement à la fin']].map(([k,l])=>`<label><input type="radio" name="t" ${opt.timingA===k?'checked':''} onchange="opt.timingA='${k}'"> ${l}</label>`).join('')+'<div class="ev">Coordonnées envoyées dès « Valider ». Onglet fermé sans fermer la modale : Henri a le contact, sans brouillon ni refus.</div>':''}
   <label><input type="checkbox" ${opt.minPhrases?'checked':''} onchange="opt.minPhrases=this.checked;render()"> minimum de texte pour continuer</label>
   <button class="btn btn-ghost" style="color:#fff;font-size:12px;padding:4px 8px;margin-top:6px" onclick="reset();$('#voile').classList.remove('open');render()">Tout réinitialiser</button>
   <h5>E-mails envoyés (${LOG.mails.length})</h5>${LOG.mails.map(x=>`<div class="mail">${esc(x)}</div>`).join('')||'<div class="ev">aucun</div>'}
