@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROTOTYPE — Brief guidé</title>
+<!--
+  PROTOTYPE JETABLE — jamais fusionné dans main.
+  Question : « Comment découper le brief en étapes guidées ? » (issue #32).
+  Trois parcours guidés, switchables via ?variant=A|B|C, dans la modale centrée du site :
+    A — Coordonnées d'abord (proposition d'Henri) : coordonnées → société → pourquoi → relire
+    B — Coordonnées en dernier : société → pourquoi → relire → coordonnées
+    C — Une question à la fois : une seule colonne qui se déroule, questions courtes à choix
+  Panneau « État » à droite : ce qui part chez Henri (e-mails), chez Mistral, chez Umami, et le brouillon localStorage.
+  Dictée et reformulation sont simulées. Rien n'est réellement envoyé ni stocké.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--encre:#0E1626;--surf-s:#172235;--filet-s:#263248;--fond:#FAFAF8;--surf:#fff;--txt2:#3B424B;--txt3:#5C6570;--filet:#E1E3E6;--filet2:#C3C8CE;--corail:#F0503C;--corail-f:#C7362A}
+*{box-sizing:border-box}
+body{margin:0;font-family:"IBM Plex Sans",sans-serif;background:var(--fond);color:var(--encre);font-size:15px;line-height:1.5}
+h1,h2,h3{font-family:"Space Grotesk",sans-serif;font-weight:600;margin:0}
+.mono{font-family:"IBM Plex Mono",monospace}
+nav{position:sticky;top:0;background:var(--encre);color:#fff;display:flex;align-items:center;gap:24px;padding:12px 24px;z-index:5}
+nav .nom{font-family:"Space Grotesk";font-weight:600;margin-right:auto}
+nav a{color:#C4CAD2;text-decoration:none;font-size:14px}
+.btn{border:0;border-radius:6px;padding:10px 16px;font:500 14px "IBM Plex Sans";cursor:pointer}
+.btn-corail{background:var(--corail);color:var(--encre)}
+.btn-encre{background:var(--encre);color:#fff}
+.btn-encre:disabled{background:var(--filet2);cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--txt2);border:1px solid var(--filet2)}
+.lien{background:none;border:0;color:var(--corail-f);cursor:pointer;font:inherit;padding:0;text-decoration:underline}
+.hero{background:radial-gradient(ellipse 80% 110% at 100% 0%,#1C2840 0%,#0E1626 65%);color:#fff;padding:64px 24px 80px}
+.hero .sur{color:#C4CAD2;font-size:13px;letter-spacing:.04em}
+.hero h1{font-size:40px;max-width:720px;margin:12px 0 24px}
+.hero h1 em{color:var(--corail);font-style:normal}
+.page{padding:40px 24px;color:var(--txt3);max-width:720px}
+/* modale */
+.voile{position:fixed;inset:0;background:rgba(14,22,38,.55);display:none;align-items:center;justify-content:center;z-index:10;padding:16px}
+.voile.open{display:flex}
+.modale{background:var(--surf);border-radius:10px;width:min(620px,100%);max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--filet);position:sticky;top:0;background:#fff;z-index:2}
+.prog{display:flex;gap:6px;padding:12px 24px 0}
+.prog span{flex:1;height:4px;border-radius:2px;background:var(--filet)}
+.prog span.on{background:var(--encre)}
+.prog span.cur{background:var(--corail)}
+.steplbl{padding:6px 24px 0;font-size:12px;color:var(--txt3)}
+.mbody{padding:20px 24px 24px}
+.mbody h2{font-size:22px;margin-bottom:6px}
+.aide{color:var(--txt3);font-size:13.5px;margin:0 0 14px}
+label{display:block;font-weight:500;font-size:14px;margin:12px 0 4px}
+label .opt{font-weight:400;color:var(--txt3)}
+input[type=text],input[type=email],input[type=tel],textarea{width:100%;border:1px solid var(--filet2);border-radius:6px;padding:9px 11px;font:15px "IBM Plex Sans";color:var(--encre)}
+textarea{min-height:110px;resize:vertical}
+.row{display:flex;gap:12px}.row>div{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.chip{border:1px solid var(--filet2);background:#fff;border-radius:18px;padding:7px 13px;cursor:pointer;font:14px "IBM Plex Sans";text-align:left}
+.chip.on{border-color:var(--encre);background:var(--encre);color:#fff}
+.chip small{display:block;color:var(--txt3);font-size:12px}
+.chip.on small{color:#C4CAD2}
+.outils{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.encart{font-size:12px;color:var(--txt3)}
+.ecoute{background:#FFF3F1;border:1px solid #F7C3BB;border-radius:6px;padding:6px 10px;font-size:13px;margin-top:8px}
+.actions{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.reform{border:1px solid var(--filet);border-radius:8px;padding:14px;background:var(--fond);margin-top:10px}
+.reform h4{font:500 12px "IBM Plex Mono";color:var(--corail-f);margin:10px 0 2px;text-transform:uppercase}
+.reform h4:first-child{margin-top:0}
+.reform p{margin:0}
+.recap{border-left:3px solid var(--filet2);padding:4px 12px;margin:8px 0;color:var(--txt2);font-size:14px;white-space:pre-wrap}
+.bloc{border-top:1px solid var(--filet);padding-top:18px;margin-top:18px}
+.bloc:first-child{border:0;margin:0;padding:0}
+.bloc.done{opacity:.65}
+.bloc .q{font-family:"Space Grotesk";font-weight:600;font-size:18px}
+.conf{text-align:center;padding:30px 10px}
+.conf .ok{width:48px;height:48px;border-radius:50%;background:var(--encre);color:var(--corail);display:inline-flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:12px}
+.note-proto{background:#FFF8E1;border:1px dashed #D9A400;border-radius:6px;padding:8px 10px;font-size:12.5px;color:#6B5200;margin:12px 0}
+/* panneau d'état */
+#etat{position:fixed;top:0;right:0;width:360px;height:100vh;background:#111827;color:#E5E7EB;font:12px "IBM Plex Mono";overflow:auto;z-index:20;padding:12px 14px 70px;transform:translateX(100%);transition:transform .2s}
+#etat.open{transform:none}
+#etat h5{font:600 11px "IBM Plex Mono";color:#F0503C;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.05em}
+#etat pre{white-space:pre-wrap;margin:0;background:#0B1220;padding:8px;border-radius:4px;max-height:260px;overflow:auto}
+#etat .mail{background:#0B1220;border-left:3px solid #F0503C;padding:6px 8px;margin:6px 0;white-space:pre-wrap}
+#etat .ev{color:#9CA3AF}
+#etat label{color:#E5E7EB;font:12px "IBM Plex Mono";display:flex;gap:6px;align-items:center;margin:4px 0}
+#etatBtn{position:fixed;right:16px;top:70px;z-index:21}
+/* switcher */
+#sw{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#111;color:#fff;border-radius:30px;display:flex;align-items:center;gap:6px;padding:6px 8px;z-index:30;box-shadow:0 6px 20px rgba(0,0,0,.4);font:13px "IBM Plex Mono"}
+#sw button{background:#333;color:#fff;border:0;border-radius:50%;width:30px;height:30px;cursor:pointer}
+#sw span{padding:0 10px}
+@media (max-width:640px){.voile{padding:0}.modale{border-radius:0;max-height:100vh;height:100vh}.row{flex-direction:column;gap:0}#etat{width:100%}.hero h1{font-size:28px}}
+</style>
+</head>
+<body>
+<nav><span class="nom">Henri Touchard</span><a href="#">Expériences et réalisations</a><a href="#">À propos</a><button class="btn btn-corail" id="navBtn" onclick="ouvrir()">Décrivez votre besoin</button></nav>
+<section class="hero">
+  <div class="sur mono">OPTIMISATION OPÉRATIONNELLE &amp; OUTILS SUR MESURE</div>
+  <h1>J'optimise vos processus <em>là où ça compte</em>, pour que votre équipe se concentre sur ce qui a de la valeur.</h1>
+  <button class="btn btn-corail" onclick="ouvrir()">Décrivez votre besoin</button>
+</section>
+<div class="page">(Reste de l'accueil.) Ouvrez le brief, avancez, fermez-le en cours de route, rouvrez-le : le panneau « État » montre ce qui part à chaque clic.</div>
+
+<div class="voile" id="voile" onclick="if(event.target===this)fermer()"><div class="modale" id="modale"></div></div>
+
+<button class="btn btn-ghost" id="etatBtn" style="background:#111827;color:#fff" onclick="document.getElementById('etat').classList.toggle('open')">État ⇄</button>
+<aside id="etat"></aside>
+<div id="sw"><button onclick="cycle(-1)">←</button><span id="swl"></span><button onclick="cycle(1)">→</button></div>
+
+<script>
+const VARIANTS={A:"Coordonnées d'abord",B:"Coordonnées en dernier",C:"Une question à la fois"};
+const STEPS={A:['contact','societe','pourquoi','relire'],B:['societe','pourquoi','relire','contact']};
+const TITRES={contact:'Vos coordonnées',societe:'Votre société',pourquoi:'Pourquoi m\'appelez-vous ?',relire:'Relire et envoyer'};
+const ORIENT=[
+ ['cadre','J\'ai un problème précis à régler','Je sais ce qu\'il me faut → devis gratuit au forfait'],
+ ['coince','Je sais où ça coince, pas comment le résoudre','→ un diagnostic sur place peut être utile'],
+ ['flou','Une envie d\'optimiser, encore floue','Je ne sais pas encore par où commencer']];
+const TAILLES=['Seul·e','2 à 10','11 à 50','51 à 250','Plus de 250'];
+const variant=()=>new URLSearchParams(location.search).get('variant')||'A';
+let S,LOG,opt={timingA:'valider',minPhrases:true};
+function reset(){S={open:false,step:0,revealed:0,contact:{nom:'',societe:'',email:'',tel:'',pref:'email'},taille:'',societeTxt:'',orient:'',besoinTxt:'',reform:{status:'aucune',text:''},dictee:false,contactSent:false,sent:false,rappel:null,closing:false,ecoute:null};LOG={events:[],mails:[],mistral:[]};}
+reset();
+const $=s=>document.querySelector(s);
+const esc=t=>(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function ev(n,d){LOG.events.push(n+(d?' '+JSON.stringify(d):''));}
+function mail(t){LOG.mails.push(t);}
+function brouillonVide(){return !(S.societeTxt||S.besoinTxt||S.contact.nom||S.contact.email);}
+
+function ouvrir(){S.open=true;S.closing=false;$('#voile').classList.add('open');ev('brief_ouvert');stepEvent();render();}
+function fermer(){
+  if(S.sent||brouillonVide()||S.closing){S.open=false;S.closing=false;$('#voile').classList.remove('open');render();return;}
+  S.closing=true;render();
+}
+function stepEvent(){const v=variant();if(v==='C')ev('etape_atteinte',{bloc:S.revealed+1});else ev('etape_atteinte',{etape:S.step+1,nom:STEPS[v][S.step]});}
+
+/* ---------- blocs ---------- */
+function dicteeBtn(champ){return `<div class="outils"><button class="btn btn-ghost" onclick="dicter('${champ}')">🎤 Dicter</button><span class="encart">Dictée traitée par Mistral, en France, conservée 30 jours. <a href="#" class="lien">Confidentialité</a></span></div>${S.ecoute===champ?'<div class="ecoute">● Je vous écoute… (simulation)</div>':''}`;}
+function blocContact(final){
+  const c=S.contact;
+  return `<h2>${TITRES.contact}</h2>
+  <p class="aide">${final?'Pour que je puisse vous répondre.':'Pour savoir à qui je parle et vous recontacter. Rien n\'est envoyé avant que vous cliquiez.'}</p>
+  <div class="row"><div><label>Nom et prénom *</label><input type="text" value="${esc(c.nom)}" oninput="S.contact.nom=this.value;upd()"></div>
+  <div><label>Société <span class="opt">${final?'(facultatif)':'*'}</span></label><input type="text" value="${esc(c.societe)}" oninput="S.contact.societe=this.value;upd()"></div></div>
+  <div class="row"><div><label>E-mail *</label><input type="email" value="${esc(c.email)}" oninput="S.contact.email=this.value;upd()"></div>
+  <div><label>Téléphone <span class="opt">(facultatif)</span></label><input type="tel" value="${esc(c.tel)}" oninput="S.contact.tel=this.value;upd()"></div></div>
+  <label>Je préfère être recontacté·e</label>
+  <div class="chips">${['email','telephone'].map(p=>`<button class="chip ${c.pref===p?'on':''}" onclick="S.contact.pref='${p}';render()">par ${p==='email'?'e-mail':'téléphone'}</button>`).join('')}</div>
+  <p class="encart">Vos coordonnées servent uniquement à vous répondre. <a href="#" class="lien">Confidentialité</a></p>`;
+}
+function blocSociete(){
+  return `<h2>${TITRES.societe}</h2>
+  <p class="aide">Décrivez brièvement votre société : votre activité, la taille de l'entreprise et, si c'est pertinent, votre façon de travailler dans les grandes lignes.</p>
+  ${variant()==='C'?'':`<label>Taille <span class="opt">(facultatif)</span></label><div class="chips">${TAILLES.map(t=>`<button class="chip ${S.taille===t?'on':''}" onclick="S.taille=S.taille==='${t}'?'':'${t}';render()">${t}</button>`).join('')}</div>`}
+  <label>Votre activité</label>
+  <textarea placeholder="Ex. : nous sommes un bureau d'études de 15 personnes, nous travaillons surtout sur chantier…" oninput="S.societeTxt=this.value;upd()">${esc(S.societeTxt)}</textarea>
+  ${dicteeBtn('societeTxt')}`;
+}
+function blocPourquoi(){
+  const ph={cadre:'Ex. : nos techniciens remplissent des bons papier, ressaisis le soir au bureau. Je voudrais une appli mobile qui alimente directement la facturation.',coince:'Ex. : on passe deux jours par mois à monter le bilan à la main, et on ne sait pas comment s\'en sortir.',flou:'Ex. : on a l\'impression de perdre du temps sur beaucoup de petites choses, j\'aimerais un regard extérieur.'}[S.orient]||'Ce qui vous prend du temps, ce qui coince, ce que vous aimeriez changer…';
+  return `<h2>${TITRES.pourquoi}</h2>
+  <p class="aide">Où en êtes-vous ?</p>
+  <div class="chips">${ORIENT.map(([k,l,s])=>`<button class="chip ${S.orient===k?'on':''}" onclick="S.orient='${k}';ev('orientation',{v:'${k}'});render()">${l}<small>${s}</small></button>`).join('')}</div>
+  <label>Racontez</label>
+  <textarea placeholder="${esc(ph)}" oninput="S.besoinTxt=this.value;upd()">${esc(S.besoinTxt)}</textarea>
+  <p class="encart">Pas besoin que ce soit bien écrit : quelques phrases suffisent, je vous rappelle pour préciser.</p>
+  ${dicteeBtn('besoinTxt')}`;
+}
+function blocRelire(){
+  const r=S.reform;
+  let h=`<h2>${TITRES.relire}</h2><p class="aide">Voici ce que vous m'avez écrit. Vous pouvez l'envoyer tel quel, ou me laisser le reformuler.</p>`;
+  if(r.status==='proposee'){
+    h+=`<div class="reform">${r.text}</div><div class="actions" style="margin-top:10px"><button class="btn btn-ghost" onclick="reformChoix(false)">Garder mon texte</button><button class="btn btn-encre" onclick="reformChoix(true)">C'est ça, utiliser cette version</button></div>`;
+  }else if(r.status==='acceptee'){
+    h+=`<div class="reform">${r.text}</div><p class="encart">Version reformulée retenue. <button class="lien" onclick="S.reform.status='refusee';render()">Revenir à mon texte</button></p>`;
+  }else{
+    h+=`<div class="mono" style="font-size:12px;color:var(--txt3)">VOTRE SOCIÉTÉ</div><div class="recap">${esc(S.societeTxt)||'<i>(vide)</i>'}${S.taille?'\nTaille : '+S.taille:''}</div>
+    <div class="mono" style="font-size:12px;color:var(--txt3)">POURQUOI</div><div class="recap">${S.orient?'['+ORIENT.find(o=>o[0]===S.orient)[1]+']\n':''}${esc(S.besoinTxt)||'<i>(vide)</i>'}</div>
+    <div class="outils"><button class="btn btn-ghost" onclick="reformuler()">✦ Reformuler</button><span class="encart">Fusionne vos deux textes en un brief structuré. Traité par Mistral, en France, conservé 30 jours.</span></div>`;
+  }
+  return h;
+}
+/* ---------- validations ---------- */
+function okBloc(b){
+  const c=S.contact;
+  if(b==='contact')return c.nom.trim()&&/.+@.+\..+/.test(c.email)&&(variant()!=='A'||c.societe.trim());
+  if(b==='societe')return S.societeTxt.trim().length>=(opt.minPhrases?15:1);
+  if(b==='pourquoi')return S.besoinTxt.trim().length>=(opt.minPhrases?30:1);
+  if(b==='relire')return S.reform.status!=='proposee';
+  return true;
+}
+/* ---------- actions ---------- */
+function suivant(){
+  const v=variant(),steps=STEPS[v],b=steps[S.step];
+  if(v==='A'&&b==='contact'&&opt.timingA==='valider'&&!S.contactSent){S.contactSent=true;ev('coordonnees_envoyees');
+    mail(`→ Henri · objet « Nouveau contact — ${S.contact.societe} — brief en cours »\nReply-To: ${S.contact.email}\n${S.contact.nom} · ${S.contact.tel||'(pas de tél.)'} · préfère ${S.contact.pref}\nBrief : pas encore rédigé.`);}
+  if(S.step===steps.length-1)return envoyer();
+  S.step++;stepEvent();render();
+}
+function envoyer(){
+  S.sent=true;ev('brief_envoye');
+  const o=S.orient?ORIENT.find(x=>x[0]===S.orient)[1]:'(non dit)';
+  const corps=S.reform.status==='acceptee'?'[reformulation acceptée]\n'+S.reform.text.replace(/<[^>]+>/g,'\n').replace(/\n+/g,'\n').trim()+'\n\n— Textes d\'origine —\n':'';
+  mail(`→ Henri · objet « Nouveau lead — ${S.contact.societe||S.contact.nom} — ${S.orient==='cadre'?'besoin cadré':'à explorer'} »\nReply-To: ${S.contact.email}\n${S.contact.nom} · ${S.contact.tel||'(pas de tél.)'} · préfère ${S.contact.pref}\nOrientation : ${o}\n${corps}SOCIÉTÉ${S.taille?' ('+S.taille+')':''} : ${S.societeTxt}\nBESOIN : ${S.besoinTxt}\nAides : dictée ${S.dictee?'oui':'non'}, reformulation ${S.reform.status}\nOrigine : ?src=linkedin · page /`);
+  mail(`→ ${S.contact.email} · accusé de réception (sans le texte du brief)\n« Merci, je vous réponds sous 48 h ouvrées. »`);
+  render();
+}
+function reformuler(){
+  ev('reformulation_demandee');LOG.mistral.push('reformulation : société + besoin ('+(S.societeTxt.length+S.besoinTxt.length)+' car.)');
+  const soc=S.societeTxt||'—',bes=S.besoinTxt||'—';
+  S.reform={status:'proposee',text:`<h4>Contexte</h4><p>${esc(soc)}${S.taille?' ('+S.taille+' personnes)':''}</p><h4>Ce qui coince</h4><p>${esc(bes.split(/[.!?]/)[0])}.</p><h4>Ce que vous souhaitez</h4><p>${S.orient==='flou'?'Un regard extérieur pour repérer où vous perdez du temps.':'Un outil qui supprime cette tâche (simulation).'}</p><h4>À préciser</h4><p>Volumes concernés, outils déjà en place, échéance.</p>`};
+  render();
+}
+function reformChoix(ok){S.reform.status=ok?'acceptee':'refusee';ev(ok?'reformulation_acceptee':'reformulation_refusee');render();}
+const PHRASES={societeTxt:'Nous sommes une PME de maintenance de chauffage, une vingtaine de techniciens sur la route et trois personnes au bureau. ',besoinTxt:'Les techniciens remplissent des bons d\'intervention papier, et le soir on ressaisit tout dans le logiciel de facturation. On perd au moins une heure par jour. '};
+function dicter(champ){
+  if(!S.dictee){S.dictee=true;ev('dictee_utilisee');}
+  LOG.mistral.push('dictée → '+champ+' (audio en streaming, jeton éphémère)');
+  S.ecoute=champ;render();
+  const mots=PHRASES[champ].split(' ');let i=0;
+  const t=setInterval(()=>{if(i>=mots.length||S.ecoute!==champ){clearInterval(t);S.ecoute=null;render();return;}S[champ]+=mots[i++]+' ';render();},90);
+}
+function envoyerRappel(joindre){
+  ev('rappel_envoye');S.rappel=true;
+  mail(`→ Henri · objet « Demande de rappel — ${S.contact.nom} »\n${S.contact.nom} · ${S.contact.tel}\n${joindre?'Brouillon joint :\n'+S.societeTxt+'\n'+S.besoinTxt:'(brouillon non joint)'}`);
+  S.sent=true;render();
+}
+function envoyerPartiel(){
+  ev('brief_envoye',{partiel:true});
+  mail(`→ Henri · objet « Brief (incomplet) — ${S.contact.societe} »\nSOCIÉTÉ : ${S.societeTxt||'—'}\nBESOIN : ${S.besoinTxt||'—'}`);
+  S.sent=true;render();
+}
+function upd(){renderEtat();const b=document.getElementById('suiv');if(b)b.disabled=!curOk();}
+function curOk(){const v=variant();if(v==='C')return okBloc(CBLOCS[S.revealed]);return okBloc(STEPS[v][S.step]);}
+
+/* ---------- C : une question à la fois ---------- */
+const CBLOCS=['societe','pourquoi','relire','contact'];
+function renderC(){
+  let h='';
+  const qs={societe:['Que fait votre entreprise ?','En une ou deux phrases, et combien vous êtes.'],pourquoi:['Qu\'est-ce qui vous amène ?',''],relire:['Je relis avec vous ?',''],contact:['Où vous répondre ?','']};
+  for(let i=0;i<=S.revealed;i++){
+    const b=CBLOCS[i],cur=i===S.revealed;
+    h+=`<div class="bloc ${cur?'':'done'}"><div class="mono" style="font-size:11px;color:var(--txt3)">${String(i+1).padStart(2,'0')} / 04</div>`;
+    if(!cur){h+=`<div class="q">${qs[b][0]}</div><div class="recap">${esc(resume(b))}</div><button class="lien" onclick="S.revealed=${i};render()">modifier</button></div>`;continue;}
+    if(b==='societe'){h+=`<div class="q">${qs.societe[0]}</div><p class="aide">${qs.societe[1]}</p><div class="chips">${TAILLES.map(t=>`<button class="chip ${S.taille===t?'on':''}" onclick="S.taille='${t}';render()">${t}</button>`).join('')}</div><textarea placeholder="Ex. : maintenance de chauffage, 20 techniciens sur la route…" oninput="S.societeTxt=this.value;upd()">${esc(S.societeTxt)}</textarea>${dicteeBtn('societeTxt')}`;}
+    else if(b==='pourquoi')h+=blocPourquoi().replace('<h2>'+TITRES.pourquoi+'</h2>',`<div class="q">${qs.pourquoi[0]}</div>`);
+    else if(b==='relire')h+=blocRelire().replace('<h2>'+TITRES.relire+'</h2>',`<div class="q">${qs.relire[0]}</div>`);
+    else h+=blocContact(true).replace('<h2>'+TITRES.contact+'</h2>',`<div class="q">${qs.contact[0]}</div>`);
+    h+=`<div class="actions"><span></span><button class="btn btn-encre" id="suiv" ${curOk()?'':'disabled'} onclick="suivantC()">${i===3?'Envoyer':'Continuer'}</button></div></div>`;
+  }
+  return h;
+}
+function resume(b){if(b==='societe')return (S.taille?S.taille+' · ':'')+S.societeTxt;if(b==='pourquoi')return S.besoinTxt;if(b==='relire')return 'reformulation : '+S.reform.status;return S.contact.nom;}
+function suivantC(){if(S.revealed===3)return envoyer();S.revealed++;stepEvent();render();}
+
+/* ---------- rendu ---------- */
+function render(){
+  const v=variant();
+  $('#swl').textContent=v+' ('+VARIANTS[v]+')';
+  $('#navBtn').textContent=(!S.sent&&!brouillonVide())?'Reprendre votre brief':'Décrivez votre besoin';
+  const m=$('#modale');
+  let h=`<div class="mhead"><span class="mono" style="font-size:12px;color:var(--txt3)">BRIEF · ${VARIANTS[v].toUpperCase()}</span><button class="lien" onclick="fermer()">Fermer ✕</button></div>`;
+  if(S.sent){
+    h+=`<div class="mbody conf"><div class="ok">✓</div><h2>${S.rappel?'C\'est noté, je vous rappelle.':'Merci, c\'est envoyé.'}</h2><p class="aide">Je vous réponds sous 48 h ouvrées${S.rappel?' par téléphone':' à '+esc(S.contact.email)}. La suite : un échange pour préciser votre besoin.</p><button class="btn btn-ghost" onclick="reset();fermer();render()">Fermer</button></div>`;
+  }else if(S.closing){
+    h+=`<div class="mbody">${closingHtml()}</div>`;
+  }else if(v==='C'){
+    h+=`<div class="mbody">${renderC()}</div>`;
+  }else{
+    const steps=STEPS[v],b=steps[S.step];
+    h+=`<div class="prog">${steps.map((_,i)=>`<span class="${i<S.step?'on':i===S.step?'cur':''}"></span>`).join('')}</div><div class="steplbl mono">ÉTAPE ${S.step+1} / ${steps.length}</div><div class="mbody">`;
+    h+=({contact:()=>blocContact(v==='B'),societe:blocSociete,pourquoi:blocPourquoi,relire:blocRelire})[b]();
+    const last=S.step===steps.length-1,label=last?'Envoyer':(v==='A'&&b==='contact'?'Valider':'Continuer');
+    h+=`<div class="actions">${S.step>0?`<button class="lien" onclick="S.step--;render()">← Retour</button>`:'<span></span>'}<button class="btn btn-encre" id="suiv" ${curOk()?'':'disabled'} onclick="suivant()">${label}</button></div></div>`;
+  }
+  const foc=document.activeElement,tag=foc&&foc.tagName,sel=tag==='TEXTAREA'||tag==='INPUT'?[...m.querySelectorAll('input,textarea')].indexOf(foc):-1;
+  m.innerHTML=h;
+  if(sel>=0){const el=m.querySelectorAll('input,textarea')[sel];if(el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n)}catch(e){}}}
+  renderEtat();
+}
+function closingHtml(){
+  const v=variant();
+  if(v==='A'&&S.contactSent){
+    return `<h2>Vous partez déjà ?</h2><p class="aide">J'ai bien vos coordonnées : je vous recontacte ${S.contact.pref==='telephone'?'par téléphone':'par e-mail'} sous 48 h ouvrées, même si vous n'allez pas plus loin.</p>
+    ${(S.societeTxt||S.besoinTxt)?`<p class="aide">Voulez-vous m'envoyer aussi ce que vous avez déjà écrit ?</p>`:''}
+    <div class="note-proto">Question ouverte : la demande de rappel n'a plus d'objet ici (Henri a déjà nom + e-mail). Est-ce ce comportement qu'on veut ?</div>
+    <div class="actions"><button class="btn btn-ghost" onclick="S.closing=false;render()">Continuer mon brief</button><span>${(S.societeTxt||S.besoinTxt)?'<button class="btn btn-ghost" onclick="envoyerPartiel()">Envoyer ce que j\'ai écrit</button> ':''}<button class="btn btn-encre" onclick="fermer()">Fermer</button></span></div>`;
+  }
+  return `<h2>Pas facile à formuler ?</h2><p class="aide">Laissez simplement votre nom et votre numéro, je vous rappelle pour en parler.</p>
+  <div class="row"><div><label>Nom</label><input type="text" value="${esc(S.contact.nom)}" oninput="S.contact.nom=this.value"></div><div><label>Téléphone</label><input type="tel" value="${esc(S.contact.tel)}" oninput="S.contact.tel=this.value"></div></div>
+  <label style="display:flex;gap:8px;font-weight:400"><input type="checkbox" id="joindre" checked> Joindre mon brouillon</label>
+  <div class="actions"><button class="btn btn-ghost" onclick="S.closing=false;render()">Continuer mon brief</button><span><button class="lien" onclick="fermer()">Fermer sans rien envoyer</button> &nbsp;<button class="btn btn-encre" onclick="envoyerRappel(document.getElementById('joindre').checked)">Rappelez-moi</button></span></div>`;
+}
+function renderEtat(){
+  const v=variant();
+  const draft={etape:v==='C'?S.revealed+1:S.step+1,contact:S.contact,taille:S.taille,societe:S.societeTxt,orientation:S.orient,besoin:S.besoinTxt,reformulation:S.reform.status,coordonneesDejaEnvoyees:S.contactSent};
+  $('#etat').innerHTML=`<div style="color:#fff;font-weight:600">ÉTAT — variante ${v}</div>
+  <h5>Réglages du prototype</h5>
+  ${v==='A'?`<label><input type="radio" name="t" ${opt.timingA==='valider'?'checked':''} onchange="opt.timingA='valider'"> coordonnées envoyées au clic « Valider » (étape 1)</label><label><input type="radio" name="t" ${opt.timingA==='fin'?'checked':''} onchange="opt.timingA='fin'"> coordonnées envoyées seulement à la fin</label>`:''}
+  <label><input type="checkbox" ${opt.minPhrases?'checked':''} onchange="opt.minPhrases=this.checked;render()"> minimum de texte pour continuer</label>
+  <button class="btn btn-ghost" style="color:#fff;font-size:12px;padding:4px 8px;margin-top:6px" onclick="reset();$('#voile').classList.remove('open');render()">Tout réinitialiser</button>
+  <h5>E-mails envoyés (${LOG.mails.length})</h5>${LOG.mails.map(x=>`<div class="mail">${esc(x)}</div>`).join('')||'<div class="ev">aucun</div>'}
+  <h5>Envoyé chez Mistral</h5>${LOG.mistral.map(x=>`<div class="ev">· ${esc(x)}</div>`).join('')||'<div class="ev">rien</div>'}
+  <h5>Événements Umami</h5>${LOG.events.map(x=>`<div class="ev">· ${esc(x)}</div>`).join('')||'<div class="ev">aucun</div>'}
+  <h5>Brouillon localStorage</h5><pre>${S.sent?'(effacé après envoi)':esc(JSON.stringify(draft,null,1))}</pre>`;
+}
+function cycle(d){const k=Object.keys(VARIANTS);const i=(k.indexOf(variant())+d+k.length)%k.length;const u=new URL(location);u.searchParams.set('variant',k[i]);history.replaceState(null,'',u);reset();$('#voile').classList.remove('open');render();}
+document.addEventListener('keydown',e=>{const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA')return;if(e.key==='ArrowLeft')cycle(-1);if(e.key==='ArrowRight')cycle(1);if(e.key==='Escape'&&S.open)fermer();});
+render();
+</script>
+</body>
+</html>
