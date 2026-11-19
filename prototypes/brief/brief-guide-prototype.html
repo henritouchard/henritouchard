@@ -247,7 +247,13 @@ function majPref(champ,v){
   }
   render();
 }
-function upd(){renderEtat();const b=document.getElementById('suiv');if(b)b.disabled=!curOk();}
+function rappelOk(){return okBloc('contact')&&S.contact.tel.trim();}
+function demanderRappel(){
+  ev('rappel_demande');S.rappel=true;
+  mail(`→ Henri · objet « Demande de rappel — ${S.contact.societe} »\nReply-To: ${S.contact.email}\n${S.contact.nom} · ${S.contact.tel}\nPas de brief : le prospect demande à être rappelé.\nOrigine : ?src=linkedin · page /`);
+  S.sent=true;render();
+}
+function upd(){renderEtat();const rb=document.getElementById('rappelBtn');if(rb){const ok=rappelOk();rb.disabled=!ok;rb.style.opacity=ok?'':'.5';rb.style.cursor=ok?'':'not-allowed';}const b=document.getElementById('suiv');if(b)b.disabled=!curOk();}
 function curOk(){const v=variant();if(v==='C')return okBloc(CBLOCS[S.revealed]);return okBloc(STEPS[v][S.step]);}
 
 /* ---------- C : une question à la fois ---------- */
@@ -278,7 +284,7 @@ function render(){
   const m=$('#modale');
   let h=`<div class="mhead"><span class="mono" style="font-size:12px;color:var(--txt3)">BRIEF · ${VARIANTS[v].toUpperCase()}</span><button class="lien" onclick="fermer()">Fermer ✕</button></div>`;
   if(S.sent){
-    h+=`<div class="mbody conf"><div class="ok">✓</div><h2>${S.rappel?'C\'est noté, je vous rappelle.':'Merci, c\'est envoyé.'}</h2><p class="aide">Je vous réponds sous 48 h ouvrées${S.rappel?' par téléphone':' à '+esc(S.contact.email)}. La suite : un échange pour préciser votre besoin.</p><button class="btn btn-ghost" onclick="reset();fermer();render()">Fermer</button></div>`;
+    h+=`<div class="mbody conf"><div class="ok">✓</div><h2>${S.rappel?'C\'est noté, je vous rappelle.':'Merci, c\'est envoyé.'}</h2><p class="aide">${S.rappel?'Je vous rappelle sous 48 h ouvrées au '+esc(S.contact.tel)+'.':'Je vous réponds sous 48 h ouvrées à '+esc(S.contact.email)+'. La suite : un échange pour préciser votre besoin.'}</p><button class="btn btn-ghost" onclick="reset();fermer();render()">Fermer</button></div>`;
   }else if(S.closing){
     h+=`<div class="mbody">${closingHtml()}</div>`;
   }else if(v==='C'){
@@ -288,7 +294,8 @@ function render(){
     h+=`<div class="prog">${steps.map((_,i)=>`<span class="${i<S.step?'on':i===S.step?'cur':''}"></span>`).join('')}</div><div class="steplbl mono">ÉTAPE ${S.step+1} / ${steps.length}</div><div class="mbody">`;
     h+=({contact:()=>blocContact(v==='B'),societe:blocSociete,pourquoi:blocPourquoi,relire:blocRelire})[b]();
     const last=S.step===steps.length-1,label=last?'Envoyer':(v==='A'&&b==='contact'?'Valider':'Continuer');
-    h+=`<div class="actions">${S.step>0?`<button class="lien" onclick="S.step--;render()">← Retour</button>`:'<span></span>'}<button class="btn btn-encre" id="suiv" ${curOk()?'':'disabled'} onclick="suivant()">${label}</button></div></div>`;
+    const rappelA=v==='A'&&b==='contact';
+    h+=`<div class="actions">${S.step>0?`<button class="lien" onclick="S.step--;render()">← Retour</button>`:rappelA?`<span><button class="btn btn-ghost" id="rappelBtn" ${rappelOk()?'':'disabled style="opacity:.5;cursor:not-allowed"'} onclick="demanderRappel()">Pas le temps de rédiger ? Rappelez-moi</button><br><span class="encart" id="rappelAide">${S.contact.tel.trim()?'':'Indiquez votre numéro pour être rappelé·e.'}</span></span>`:'<span></span>'}<button class="btn btn-encre" id="suiv" ${curOk()?'':'disabled'} onclick="suivant()">${label}</button></div></div>`;
   }
   const foc=document.activeElement,tag=foc&&foc.tagName,sel=tag==='TEXTAREA'||tag==='INPUT'?[...m.querySelectorAll('input,textarea')].indexOf(foc):-1;
   m.innerHTML=h;
